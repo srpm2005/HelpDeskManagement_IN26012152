@@ -3,13 +3,13 @@
     ViewData["Title"] = "Help Desk Dashboard";
 }
 
-<div class="d-flex justify-content-between align-items-center mb-4">
+<div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-3">
     <div>
         <h2 class="mb-1">Help Desk Dashboard</h2>
-        <p class="mb-0">Real-time overview of internal employee support requests.</p>
+        <p class="text-muted mb-0">Real-time overview of internal employee support requests and resolution status.</p>
     </div>
-    <a asp-action="Create" class="btn">
-        Raise New Ticket
+    <a asp-action="Create" class="btn btn-primary">
+        <i class="bi bi-plus-lg me-1"></i> Raise New Ticket
     </a>
 </div>
 
@@ -19,25 +19,11 @@
         <div class="card metric-card p-4">
             <div class="d-flex justify-content-between align-items-center">
                 <div>
-                    <span>Total Tickets</span>
-                    <h2 class="mb-0 mt-1">@Model.TotalTickets</h2>
+                    <span class="text-muted small fw-medium text-uppercase tracking-wider">Total Tickets</span>
+                    <h2 class="mb-0 mt-1 fw-bold">@Model.TotalTickets</h2>
                 </div>
-                <div class="border p-3">
-                    <i class="bi bi-ticket-perforated fs-2"></i>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="col-md-4">
-        <div class="card metric-card p-4">
-            <div class="d-flex justify-content-between align-items-center">
-                <div>
-                    <span>Open Tickets</span>
-                    <h2 class="mb-0 mt-1">@Model.OpenTickets</h2>
-                </div>
-                <div class="border p-3">
-                    <i class="bi bi-envelope-open fs-2"></i>
+                <div class="p-3 bg-secondary-subtle rounded-3 text-dark">
+                    <i class="bi bi-ticket-perforated fs-3"></i>
                 </div>
             </div>
         </div>
@@ -47,11 +33,25 @@
         <div class="card metric-card p-4">
             <div class="d-flex justify-content-between align-items-center">
                 <div>
-                    <span>Closed Tickets</span>
-                    <h2 class="mb-0 mt-1">@Model.ClosedTickets</h2>
+                    <span class="text-muted small fw-medium text-uppercase tracking-wider">Open Tickets</span>
+                    <h2 class="mb-0 mt-1 fw-bold text-primary">@Model.OpenTickets</h2>
                 </div>
-                <div class="border p-3">
-                    <i class="bi bi-check2-circle fs-2"></i>
+                <div class="p-3 bg-primary-subtle text-primary rounded-3">
+                    <i class="bi bi-envelope-open fs-3"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card metric-card p-4">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <span class="text-muted small fw-medium text-uppercase tracking-wider">Closed Tickets</span>
+                    <h2 class="mb-0 mt-1 fw-bold text-success">@Model.ClosedTickets</h2>
+                </div>
+                <div class="p-3 bg-success-subtle text-success rounded-3">
+                    <i class="bi bi-check2-circle fs-3"></i>
                 </div>
             </div>
         </div>
@@ -61,8 +61,8 @@
 <!-- Recent Tickets List -->
 <div class="card main-card p-4">
     <div class="d-flex justify-content-between align-items-center mb-3">
-        <h5 class="mb-0">Recently Raised Support Tickets</h5>
-        <a asp-action="Index" class="btn btn-sm">View All Tickets</a>
+        <h5 class="mb-0 fw-semibold">Recently Raised Support Tickets</h5>
+        <a asp-action="Index" class="btn btn-sm">View All Tickets <i class="bi bi-arrow-right ms-1"></i></a>
     </div>
 
     @if (Model.RecentTickets.Any())
@@ -83,20 +83,22 @@
                 <tbody>
                     @foreach (var ticket in Model.RecentTickets)
                     {
+                        var priorityBg = ticket.Priority == "High" ? "bg-danger-subtle text-danger" : (ticket.Priority == "Medium" ? "bg-warning-subtle text-warning-emphasis" : "bg-light text-secondary");
+                        var statusBg = ticket.Status == "Open" ? "bg-primary-subtle text-primary" : (ticket.Status == "In Progress" ? "bg-warning-subtle text-warning-emphasis" : "bg-success-subtle text-success");
                         <tr>
-                            <td>#@ticket.Id</td>
-                            <td>@ticket.Title</td>
+                            <td class="fw-semibold">#@ticket.Id</td>
+                            <td class="fw-medium">@ticket.Title</td>
                             <td>
-                                <span class="badge">@ticket.Priority</span>
+                                <span class="badge @priorityBg">@ticket.Priority</span>
                             </td>
                             <td>
-                                <span class="badge">@ticket.Status</span>
+                                <span class="badge @statusBg">@ticket.Status</span>
                             </td>
                             <td>@ticket.RaisedBy</td>
-                            <td>@ticket.CreatedDate.ToString("yyyy-MM-dd HH:mm")</td>
+                            <td class="text-muted">@ticket.CreatedDate.ToString("yyyy-MM-dd HH:mm")</td>
                             <td class="text-end">
                                 <a asp-action="Details" asp-route-id="@ticket.Id" class="btn btn-sm me-1">Details</a>
-                                <a asp-action="Edit" asp-route-id="@ticket.Id" class="btn btn-sm me-1">Edit</a>
+                                <a asp-action="Edit" asp-route-id="@ticket.Id" class="btn btn-sm">Edit</a>
                             </td>
                         </tr>
                     }
@@ -106,8 +108,10 @@
     }
     else
     {
-        <div class="text-center py-5 border">
-            <p class="mb-0">No tickets found in system.</p>
+        <div class="text-center py-5 border rounded-3 bg-light-subtle">
+            <i class="bi bi-inbox fs-1 text-muted d-block mb-2"></i>
+            <p class="mb-0 text-muted">No tickets found in system.</p>
         </div>
     }
 </div>
+

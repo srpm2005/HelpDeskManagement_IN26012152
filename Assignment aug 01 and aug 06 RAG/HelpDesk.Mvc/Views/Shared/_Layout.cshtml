@@ -4,133 +4,210 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - Help Desk Ticket Management System</title>
+    <!-- Google Fonts: Inter (Asana geometric sans-serif aesthetic) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" />
     <style>
-        /* Strict Monochrome & Single Regular Font Rule */
-        * {
-            border-radius: 0 !important;
-            font-family: sans-serif !important;
-            font-weight: 400 !important;
-            font-style: normal !important;
-            color: #000000 !important;
-            box-shadow: none !important;
-            text-shadow: none !important;
+        /* Asana Design System Core Variables */
+        :root {
+            --asana-primary: #646f79;
+            --asana-on-primary: #ffffff;
+            --asana-bg: #f8f9fa;
+            --asana-surface: #ffffff;
+            --asana-border: #eaecf0;
+            --asana-text: #0d0d0d;
+            --asana-text-muted: #646f79;
+            --asana-accent: #0d0e10;
+            --asana-radius-sm: 6px;
+            --asana-radius-md: 10px;
+            --asana-radius-lg: 16px;
+            --asana-radius-pill: 50px;
+            --asana-shadow-card: rgba(0, 0, 0, 0.04) 0px 3px 12px 0px, rgba(0, 0, 0, 0.02) 0px 1px 3px 0px;
+            --asana-shadow-hover: rgba(0, 0, 0, 0.08) 0px 6px 20px 0px;
+            --asana-font: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            --asana-transition: all 200ms ease-in-out;
         }
 
         body {
-            background-color: #ffffff !important;
-            color: #000000 !important;
+            font-family: var(--asana-font);
+            background-color: var(--asana-bg);
+            color: var(--asana-text);
+            line-height: 1.5;
+            -webkit-font-smoothing: antialiased;
         }
 
-        /* GitHub Sticker Badge */
-        .github-sticker-badge {
-            background-color: #ffffff !important;
-            color: #000000 !important;
-            border: 1px solid #000000 !important;
-            padding: 0.25rem 0.6rem !important;
-            font-size: 0.8rem !important;
-            font-weight: 600 !important;
-            display: inline-flex !important;
-            align-items: center !important;
-            text-decoration: none !important;
-            transition: all 0.2s ease-in-out;
-        }
-        .github-sticker-badge:hover {
-            background-color: #000000 !important;
-            color: #ffffff !important;
-        }
-        .github-sticker-badge:hover * {
-            color: #ffffff !important;
+        h1, h2, h3, h4, h5, h6 {
+            font-family: var(--asana-font);
+            font-weight: 600;
+            color: var(--asana-accent);
+            letter-spacing: -0.02em;
         }
 
-        /* Navbar */
+        /* Asana Navigation Header */
         .navbar-custom {
-            background-color: #ffffff !important;
-            border-bottom: 1px solid #000000 !important;
-            padding-top: 0.75rem;
-            padding-bottom: 0.75rem;
+            background-color: var(--asana-surface);
+            border-bottom: 1px solid var(--asana-border);
+            padding: 0.85rem 0;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
         }
         .navbar-brand {
-            color: #000000 !important;
-            font-size: 1.2rem;
-            text-decoration: none;
+            font-weight: 600;
+            color: var(--asana-accent) !important;
+            font-size: 1.15rem;
+            letter-spacing: -0.01em;
         }
+        .navbar-brand-icon {
+            width: 28px;
+            height: 28px;
+            background-color: var(--asana-accent);
+            color: #ffffff;
+            border-radius: var(--asana-radius-sm);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+        }
+
+        /* GitHub Sticker Badge (Asana Pill Badge Style) */
+        .github-sticker-badge {
+            background-color: #f3f4f6;
+            color: var(--asana-text) !important;
+            border: 1px solid var(--asana-border);
+            padding: 0.35rem 0.85rem;
+            border-radius: var(--asana-radius-pill);
+            font-size: 0.78rem;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            text-decoration: none !important;
+            transition: var(--asana-transition);
+        }
+        .github-sticker-badge:hover {
+            background-color: var(--asana-accent);
+            color: #ffffff !important;
+            border-color: var(--asana-accent);
+        }
+
+        /* Navigation Links */
         .nav-link {
-            color: #000000 !important;
-            padding: 0.4rem 0.8rem !important;
-            border: 1px solid #000000 !important;
-            margin-right: 0.4rem;
+            color: var(--asana-text-muted) !important;
+            font-size: 0.9rem;
+            font-weight: 500;
+            padding: 0.45rem 0.95rem !important;
+            border-radius: var(--asana-radius-pill);
+            transition: var(--asana-transition);
             text-decoration: none;
         }
         .nav-link:hover {
-            background-color: #000000 !important;
-            color: #ffffff !important;
+            color: var(--asana-accent) !important;
+            background-color: #f3f4f6;
         }
 
-        /* Cards & Metric Boxes */
+        /* Cards & Surfaces */
         .card, .main-card, .metric-card {
-            background-color: #ffffff !important;
-            border: 1px solid #000000 !important;
+            background-color: var(--asana-surface);
+            border: 1px solid var(--asana-border);
+            border-radius: var(--asana-radius-lg);
+            box-shadow: var(--asana-shadow-card);
+            transition: var(--asana-transition);
+        }
+        .metric-card:hover {
+            box-shadow: var(--asana-shadow-hover);
+            transform: translateY(-2px);
         }
 
         /* Buttons */
         .btn {
-            background-color: #ffffff !important;
-            color: #000000 !important;
-            border: 1px solid #000000 !important;
-            text-decoration: none;
-            padding: 0.375rem 0.75rem;
+            font-family: var(--asana-font);
+            font-weight: 500;
+            font-size: 0.875rem;
+            padding: 0.5rem 1.1rem;
+            border-radius: var(--asana-radius-md);
+            transition: var(--asana-transition);
+            border: 1px solid var(--asana-border);
+            background-color: var(--asana-surface);
+            color: var(--asana-text);
         }
         .btn:hover {
-            background-color: #000000 !important;
-            color: #ffffff !important;
+            background-color: #f3f4f6;
+            color: var(--asana-accent);
         }
-        .btn:hover * {
+        .btn-primary, .btn-main {
+            background-color: var(--asana-accent) !important;
             color: #ffffff !important;
+            border-color: var(--asana-accent) !important;
         }
-        .btn-primary, .btn-secondary, .btn-success, .btn-danger, .btn-warning, .btn-info, .btn-light, .btn-outline-secondary, .btn-outline-primary {
-            background-color: #ffffff !important;
-            color: #000000 !important;
-            border: 1px solid #000000 !important;
+        .btn-primary:hover, .btn-main:hover {
+            background-color: var(--asana-primary) !important;
+            border-color: var(--asana-primary) !important;
+            color: #ffffff !important;
         }
 
         /* Badges */
         .badge {
-            background-color: #ffffff !important;
-            color: #000000 !important;
-            border: 1px solid #000000 !important;
-            padding: 0.25rem 0.5rem;
-            display: inline-block;
+            font-size: 0.75rem;
+            font-weight: 500;
+            padding: 0.35rem 0.7rem;
+            border-radius: var(--asana-radius-pill);
+            display: inline-flex;
+            align-items: center;
         }
 
         /* Tables */
         .table {
-            background-color: #ffffff !important;
-            border: 1px solid #000000 !important;
+            color: var(--asana-text);
+            vertical-align: middle;
         }
-        .table th, .table td {
-            border: 1px solid #000000 !important;
-            background-color: #ffffff !important;
-            color: #000000 !important;
+        .table th {
+            font-size: 0.78rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            color: var(--asana-text-muted);
+            background-color: #f9fafb !important;
+            border-bottom: 1px solid var(--asana-border) !important;
+            padding: 0.85rem 1rem;
+        }
+        .table td {
+            padding: 0.85rem 1rem;
+            border-bottom: 1px solid var(--asana-border);
+            font-size: 0.9rem;
         }
 
         /* Form Controls */
         .form-control, .form-select {
-            background-color: #ffffff !important;
-            border: 1px solid #000000 !important;
-            color: #000000 !important;
+            font-family: var(--asana-font);
+            background-color: var(--asana-surface);
+            border: 1px solid var(--asana-border);
+            border-radius: var(--asana-radius-md);
+            color: var(--asana-text);
+            padding: 0.55rem 0.85rem;
+            font-size: 0.9rem;
+            transition: var(--asana-transition);
         }
         .form-control:focus, .form-select:focus {
-            background-color: #ffffff !important;
-            border: 1px solid #000000 !important;
-            color: #000000 !important;
+            border-color: var(--asana-primary);
+            box-shadow: 0 0 0 3px rgba(100, 111, 121, 0.15);
+            background-color: var(--asana-surface);
+        }
+
+        /* Alerts */
+        .alert {
+            border-radius: var(--asana-radius-md);
+            border: 1px solid var(--asana-border);
+            font-size: 0.9rem;
+            font-weight: 500;
         }
 
         /* Footer */
         footer {
-            background-color: #ffffff !important;
-            border-top: 1px solid #000000 !important;
+            background-color: var(--asana-surface);
+            border-top: 1px solid var(--asana-border);
+            color: var(--asana-text-muted);
+            font-size: 0.85rem;
         }
     </style>
 </head>
@@ -139,36 +216,36 @@
         <nav class="navbar navbar-expand-lg navbar-custom">
             <div class="container">
                 <a class="navbar-brand d-flex align-items-center gap-2" asp-controller="Ticket" asp-action="Dashboard">
-                    <i class="bi bi-square"></i>
-                    <span>HelpDesk System</span>
+                    <span class="navbar-brand-icon"><i class="bi bi-layers-fill"></i></span>
+                    <span>HelpDesk</span>
                     <a href="https://github.com/srpm2005/HelpDeskManagement_IN26012152" target="_blank" class="github-sticker-badge ms-2" title="View GitHub Profile: srpm2005">
                         <i class="bi bi-github me-1"></i>
                         <span>SHRI RAM PRINCE MISHRA IN26012152</span>
                     </a>
                 </a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="collapse navbar-collapse" id="navbarNav">
                     <ul class="navbar-nav ms-auto gap-2">
                         <li class="nav-item">
                             <a class="nav-link" asp-controller="Ticket" asp-action="Dashboard">
-                                Dashboard
+                                <i class="bi bi-grid me-1"></i> Dashboard
                             </a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" asp-controller="Ticket" asp-action="Index">
-                                View All Tickets
+                                <i class="bi bi-ticket-perforated me-1"></i> View All Tickets
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" asp-controller="Ticket" asp-action="Create">
-                                Raise New Ticket
+                            <a class="nav-link btn-primary text-white" asp-controller="Ticket" asp-action="Create">
+                                <i class="bi bi-plus-lg me-1"></i> Raise New Ticket
                             </a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" asp-controller="Ticket" asp-action="KnowledgeAssistant">
-                                AI Knowledge Assistant
+                                <i class="bi bi-robot me-1"></i> AI Assistant
                             </a>
                         </li>
                     </ul>
@@ -180,14 +257,14 @@
     <div class="container py-4">
         @if (TempData["SuccessMessage"] != null)
         {
-            <div class="alert border border-dark p-3 mb-4" role="alert">
-                @TempData["SuccessMessage"]
+            <div class="alert alert-success border-0 bg-success-subtle text-success p-3 mb-4" role="alert">
+                <i class="bi bi-check-circle-fill me-2"></i> @TempData["SuccessMessage"]
             </div>
         }
         @if (TempData["ErrorMessage"] != null)
         {
-            <div class="alert border border-dark p-3 mb-4" role="alert">
-                @TempData["ErrorMessage"]
+            <div class="alert alert-danger border-0 bg-danger-subtle text-danger p-3 mb-4" role="alert">
+                <i class="bi bi-exclamation-triangle-fill me-2"></i> @TempData["ErrorMessage"]
             </div>
         }
 
@@ -196,11 +273,11 @@
         </main>
     </div>
 
-    <footer class="footer py-4 mt-5 border-top border-dark bg-white">
+    <footer class="footer py-4 mt-5">
         <div class="container text-center">
-            <p class="mb-2">&copy; 2026 Help Desk Ticket Management System - MP Online Project</p>
+            <p class="mb-2 text-muted">&copy; 2026 Help Desk Ticket Management System - MP Online Project</p>
             <a href="https://github.com/srpm2005/HelpDeskManagement_IN26012152" target="_blank" class="github-sticker-badge py-2 px-3 mt-1" title="Visit GitHub Repository & Profile: srpm2005">
-                <i class="bi bi-github me-2 fs-5"></i>
+                <i class="bi bi-github me-2 fs-6"></i>
                 <span>SHRI RAM PRINCE MISHRA IN26012152</span>
             </a>
         </div>
@@ -210,3 +287,4 @@
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
+

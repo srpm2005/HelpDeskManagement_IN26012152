@@ -2,13 +2,19 @@
     ViewData["Title"] = "AI Knowledge Assistant";
 }
 
+@{
+    ViewData["Title"] = "AI Knowledge Assistant";
+}
+
 <div class="row mb-4">
     <div class="col-12">
-        <div class="card p-4 border border-dark mb-4">
+        <div class="card p-4 mb-4">
             <div class="d-flex align-items-center gap-3">
-                <i class="bi bi-robot fs-1"></i>
+                <div class="p-3 bg-secondary-subtle rounded-3 text-dark">
+                    <i class="bi bi-robot fs-2"></i>
+                </div>
                 <div>
-                    <h2 class="mb-1 text-uppercase">AI Knowledge Assistant</h2>
+                    <h2 class="mb-1 fw-bold">AI Knowledge Assistant</h2>
                     <p class="mb-0 text-muted">Retrieval-Augmented Generation (RAG) Developer Onboarding System</p>
                 </div>
             </div>
@@ -17,64 +23,64 @@
 </div>
 
 <!-- Preset Developer Onboarding Queries Gallery -->
-<div class="card p-3 mb-4 border border-dark">
-    <h5 class="mb-3 text-uppercase"><i class="bi bi-lightning-charge me-2"></i>Quick Developer Onboarding Queries</h5>
+<div class="card p-4 mb-4">
+    <h6 class="mb-3 text-uppercase fw-semibold tracking-wider text-muted"><i class="bi bi-lightning-charge me-2 text-warning"></i>Quick Developer Onboarding Queries</h6>
     <div class="d-flex flex-wrap gap-2">
-        <button class="btn btn-outline-dark preset-btn" data-query="What REST API endpoints exist and what are their HTTP methods?">
+        <button class="btn btn-sm preset-btn" data-query="What REST API endpoints exist and what are their HTTP methods?">
             🌐 REST API Endpoints
         </button>
-        <button class="btn btn-outline-dark preset-btn" data-query="Explain the project architecture and multi-tier structure.">
+        <button class="btn btn-sm preset-btn" data-query="Explain the project architecture and multi-tier structure.">
             🏗️ Project Architecture
         </button>
-        <button class="btn btn-outline-dark preset-btn" data-query="How does HelpDesk.Mvc consume the Web API?">
+        <button class="btn btn-sm preset-btn" data-query="How does HelpDesk.Mvc consume the Web API?">
             🔄 MVC to Web API Service
         </button>
-        <button class="btn btn-outline-dark preset-btn" data-query="How are unit tests set up with Moq and xUnit?">
+        <button class="btn btn-sm preset-btn" data-query="How are unit tests set up with Moq and xUnit?">
             🧪 Unit Testing & Moq
         </button>
-        <button class="btn btn-outline-dark preset-btn" data-query="How to run the Web API and MVC applications locally?">
+        <button class="btn btn-sm preset-btn" data-query="How to run the Web API and MVC applications locally?">
             🚀 Run Applications Locally
         </button>
     </div>
 </div>
 
 <!-- Query Input Form -->
-<div class="card p-4 mb-4 border border-dark">
-    <h5 class="mb-3 text-uppercase"><i class="bi bi-question-square me-2"></i>Ask Question About Codebase</h5>
+<div class="card p-4 mb-4">
+    <h6 class="mb-3 text-uppercase fw-semibold tracking-wider text-muted"><i class="bi bi-question-square me-2 text-primary"></i>Ask Question About Codebase</h6>
     <div class="input-group">
-        <input type="text" id="queryInput" class="form-control form-control-lg border-dark" placeholder="e.g. How does TicketController handle ticket creation?" />
-        <button class="btn btn-dark px-4" id="submitBtn" type="button">
+        <input type="text" id="queryInput" class="form-control form-control-lg" placeholder="e.g. How does TicketController handle ticket creation?" />
+        <button class="btn btn-primary px-4" id="submitBtn" type="button">
             <i class="bi bi-search me-2"></i>Ask Assistant
         </button>
     </div>
 </div>
 
 <!-- Loading Spinner -->
-<div id="loadingContainer" class="card p-4 mb-4 border border-dark text-center d-none">
-    <div class="spinner-border text-dark mx-auto mb-2" role="status"></div>
-    <p class="mb-0">Querying RAG Vector Database & Synthesizing Grounded Answer...</p>
+<div id="loadingContainer" class="card p-4 mb-4 text-center d-none">
+    <div class="spinner-border text-primary mx-auto mb-2" role="status"></div>
+    <p class="mb-0 text-muted">Querying RAG Vector Database & Synthesizing Grounded Answer...</p>
 </div>
 
 <!-- Output Container -->
 <div id="resultContainer" class="d-none">
-    <div class="card p-4 mb-4 border border-dark">
-        <h4 class="mb-3 text-uppercase border-bottom pb-2 border-dark">
-            <i class="bi bi-chat-left-text me-2"></i>RAG Generated Answer
+    <div class="card p-4 mb-4">
+        <h4 class="mb-3 fw-bold border-bottom pb-3">
+            <i class="bi bi-chat-left-text me-2 text-primary"></i>RAG Generated Answer
         </h4>
         <div id="answerContent" class="mb-4" style="line-height: 1.6;"></div>
 
-        <h5 class="mb-2 text-uppercase"><i class="bi bi-bookmark-check me-2"></i>Source Citations</h5>
+        <h6 class="mb-2 text-uppercase fw-semibold text-muted"><i class="bi bi-bookmark-check me-2 text-success"></i>Source Citations</h6>
         <div id="citationsContainer" class="d-flex flex-wrap gap-2 mb-4"></div>
 
-        <div class="accordion border border-dark" id="contextAccordion">
-            <div class="accordion-item border-0">
+        <div class="accordion" id="contextAccordion">
+            <div class="accordion-item border rounded-3 overflow-hidden">
                 <h2 class="accordion-header" id="headingContext">
-                    <button class="accordion-button collapsed bg-white text-dark border-bottom border-dark" type="button" data-bs-toggle="collapse" data-bs-target="#collapseContext">
+                    <button class="accordion-button collapsed bg-light text-dark shadow-none" type="button" data-bs-toggle="collapse" data-bs-target="#collapseContext">
                         <i class="bi bi-journal-code me-2"></i>Inspect Retrieved Context Snippets & Scores
                     </button>
                 </h2>
                 <div id="collapseContext" class="accordion-collapse collapse" data-bs-parent="#contextAccordion">
-                    <div class="accordion-body p-3" id="snippetsContent"></div>
+                    <div class="accordion-body p-3 bg-white" id="snippetsContent"></div>
                 </div>
             </div>
         </div>
