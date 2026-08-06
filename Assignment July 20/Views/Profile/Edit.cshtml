@@ -1,0 +1,47 @@
+@model StudentRegistration.Models.EditProfileViewModel
+@{
+    ViewData["Title"] = "Edit Profile Details";
+}
+
+<div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+        <div class="card glass-card border-0 p-4">
+            <div class="card-body">
+                <div class="d-flex align-items-center mb-4">
+                    <a asp-action="Index" class="btn btn-sm btn-secondary-custom me-3 py-2 px-3">
+                        <i class="bi bi-arrow-left"></i>
+                    </a>
+                    <div>
+                        <h2 class="font-weight-bold h4 mb-0">Edit Profile Details</h2>
+                        <p class="text-secondary mb-0 text-opacity-75" style="font-size: 0.9rem;">Update your personal student details</p>
+                    </div>
+                </div>
+
+                <form asp-action="Edit" method="post">
+                    @Html.AntiForgeryToken()
+                    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                    <div class="form-floating mb-3">
+                        <input asp-for="FirstName" class="form-control" placeholder="First Name" required />
+                        <label asp-for="FirstName">First Name</label>
+                        <span asp-validation-for="FirstName" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-floating mb-4">
+                        <input asp-for="LastName" class="form-control" placeholder="Last Name" required />
+                        <label asp-for="LastName">Last Name</label>
+                        <span asp-validation-for="LastName" class="text-danger"></span>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary-custom w-100 py-3">
+                        Save Profile Changes
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @await Html.PartialAsync("_ValidationScriptsPartial")
+}

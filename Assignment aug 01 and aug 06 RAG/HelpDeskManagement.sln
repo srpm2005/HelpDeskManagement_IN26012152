@@ -1,0 +1,30 @@
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HelpDesk.Api", "HelpDesk.Api\HelpDesk.Api.csproj", "{B1E2A3C4-D5E6-4F70-9812-3456789ABCDE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HelpDesk.Mvc", "HelpDesk.Mvc\HelpDesk.Mvc.csproj", "{C2E3A4B5-D6E7-4F81-9923-456789abcdef}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HelpDesk.Tests", "HelpDesk.Tests\HelpDesk.Tests.csproj", "{D3E4A5B6-D7E8-4F92-8834-56789abcdef0}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{B1E2A3C4-D5E6-4F70-9812-3456789ABCDE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B1E2A3C4-D5E6-4F70-9812-3456789ABCDE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B1E2A3C4-D5E6-4F70-9812-3456789ABCDE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B1E2A3C4-D5E6-4F70-9812-3456789ABCDE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C2E3A4B5-D6E7-4F81-9923-456789abcdef}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C2E3A4B5-D6E7-4F81-9923-456789abcdef}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C2E3A4B5-D6E7-4F81-9923-456789abcdef}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C2E3A4B5-D6E7-4F81-9923-456789abcdef}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D3E4A5B6-D7E8-4F92-8834-56789abcdef0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D3E4A5B6-D7E8-4F92-8834-56789abcdef0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D3E4A5B6-D7E8-4F92-8834-56789abcdef0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D3E4A5B6-D7E8-4F92-8834-56789abcdef0}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal

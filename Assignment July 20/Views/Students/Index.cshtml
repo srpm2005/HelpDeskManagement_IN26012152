@@ -1,0 +1,67 @@
+@model IEnumerable<StudentRegistration.Models.ApplicationUser>
+@{
+    ViewData["Title"] = "Student Roster";
+}
+
+<div class="mb-4">
+    <h1 class="h2 font-weight-bold mb-1">Registered Students</h1>
+    <p class="text-secondary mb-0">View all students registered in the system and their enrolled courses</p>
+</div>
+
+<div class="card glass-card border-0 overflow-hidden">
+    <div class="table-responsive">
+        <table class="table table-custom table-hover mb-0">
+            <thead>
+                <tr>
+                    <th scope="col" class="ps-4 py-3">Student Name</th>
+                    <th scope="col" class="py-3">Email Address</th>
+                    <th scope="col" class="py-3 pe-4">Registered Course</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (!Model.Any())
+                {
+                    <tr>
+                        <td colspan="3" class="text-center py-5 text-secondary">
+                            <i class="bi bi-people fs-2 d-block mb-2 text-opacity-50"></i>
+                            No students registered yet.
+                        </td>
+                    </tr>
+                }
+                else
+                {
+                    foreach (var student in Model)
+                    {
+                        <tr>
+                            <td class="ps-4 py-3 font-weight-bold text-dark">
+                                <i class="bi bi-person-fill text-indigo me-2"></i>@student.FirstName @student.LastName
+                            </td>
+                            <td class="py-3 text-secondary">
+                                @student.Email
+                            </td>
+                            <td class="py-3 pe-4">
+                                @if (student.RegisteredCourse != null)
+                                {
+                                    <div class="d-flex align-items-center">
+                                        <span class="badge bg-success bg-opacity-10 text-success me-2 px-2 py-1">
+                                            @student.RegisteredCourse.Credits Credits
+                                        </span>
+                                        <span class="font-weight-medium text-dark">
+                                            @student.RegisteredCourse.Name
+                                        </span>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-warning bg-opacity-10 text-warning px-3 py-2 rounded-pill font-weight-bold">
+                                        Not Registered
+                                    </span>
+                                }
+                            </td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

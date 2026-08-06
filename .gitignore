@@ -1,0 +1,12 @@
+## Visual Studio / .NET Core build output
+**/bin/
+**/obj/
+**/.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+.idea/
+.vscode/
+[Tt]emp/
+HelpDeskManagement_IN26012154-main/

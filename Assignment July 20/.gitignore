@@ -1,0 +1,10 @@
+## Ignore Visual Studio / .NET build artifacts
+bin/
+obj/
+.vs/
+*.user
+*.suo
+*.userossc
+*.lock.json
+project.lock.json
+appsettings.Development.json

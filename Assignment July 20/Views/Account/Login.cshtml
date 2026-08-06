@@ -1,0 +1,59 @@
+@model StudentRegistration.Models.LoginViewModel
+@{
+    ViewData["Title"] = "Login";
+}
+
+<div class="row justify-content-center">
+    <div class="col-md-6 col-lg-5">
+        <div class="card glass-card border-0 p-4">
+            <div class="card-body">
+                <div class="text-center mb-4">
+                    <div class="bg-primary bg-opacity-10 p-3 rounded-circle text-primary d-inline-flex mb-3">
+                        <i class="bi bi-box-arrow-in-right fs-2"></i>
+                    </div>
+                    <h2 class="font-weight-bold h4">Welcome Back</h2>
+                    <p class="text-secondary text-opacity-75">Sign in to manage your registration portal</p>
+                </div>
+
+                <form asp-action="Login" asp-route-returnUrl="@ViewData["ReturnUrl"]" method="post">
+                    @Html.AntiForgeryToken()
+                    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                    <div class="form-floating mb-3">
+                        <input asp-for="Email" class="form-control" placeholder="name@example.com" required autocomplete="username" />
+                        <label asp-for="Email">Email Address</label>
+                        <span asp-validation-for="Email" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-floating mb-3">
+                        <input asp-for="Password" class="form-control" placeholder="Password" required autocomplete="current-password" />
+                        <label asp-for="Password">Password</label>
+                        <span asp-validation-for="Password" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-check mb-4">
+                        <input class="form-check-input" asp-for="RememberMe" />
+                        <label class="form-check-label" asp-for="RememberMe">
+                            @Html.DisplayNameFor(m => m.RememberMe)
+                        </label>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary-custom w-100 py-3 mb-3">
+                        Sign In
+                    </button>
+
+                    <div class="text-center">
+                        <p class="mb-0 text-secondary">
+                            Don't have an account? 
+                            <a asp-action="Register" class="text-primary font-weight-bold text-decoration-none">Register here</a>
+                        </p>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @await Html.PartialAsync("_ValidationScriptsPartial")
+}

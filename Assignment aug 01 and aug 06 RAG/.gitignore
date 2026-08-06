@@ -1,0 +1,14 @@
+## Visual Studio / .NET Core build output
+bin/
+obj/
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+.idea/
+.vscode/
+[Tt]emp/
+MP_Online Aug01-Assignment.pdf
+__pycache__/
+

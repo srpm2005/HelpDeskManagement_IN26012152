@@ -1,0 +1,82 @@
+[
+  {
+    "test_id": "TC-01",
+    "category": "API Specs",
+    "query": "What REST API endpoints exist and what are their HTTP methods?",
+    "status": "PASS",
+    "latency_ms": 2.23,
+    "top_source": "RAG_KNOWLEDGE_ASSISTANT_REPORT.md",
+    "source_matched": true,
+    "keyword_precision": 1.0,
+    "top_score": 2.4804,
+    "citations": [
+      "RAG_KNOWLEDGE_ASSISTANT_REPORT.md#L115-L129",
+      "README.md#L81-L93",
+      "HelpDesk_Assignment_Report.md#L45-L57"
+    ]
+  },
+  {
+    "test_id": "TC-02",
+    "category": "Architecture",
+    "query": "Explain the project architecture and multi-tier structure.",
+    "status": "PASS",
+    "latency_ms": 1.0,
+    "top_source": "README.md",
+    "source_matched": true,
+    "keyword_precision": 1.0,
+    "top_score": 0.4179,
+    "citations": [
+      "README.md#L103-L113",
+      "RAG_KNOWLEDGE_ASSISTANT_REPORT.md#L115-L129",
+      "HelpDesk_Assignment_Report.md#L12-L19"
+    ]
+  },
+  {
+    "test_id": "TC-03",
+    "category": "MVC Integration",
+    "query": "How does HelpDesk.Mvc consume the Web API?",
+    "status": "PASS",
+    "latency_ms": 1.0,
+    "top_source": "RAG_KNOWLEDGE_ASSISTANT_REPORT.md",
+    "source_matched": true,
+    "keyword_precision": 1.0,
+    "top_score": 2.0826,
+    "citations": [
+      "RAG_KNOWLEDGE_ASSISTANT_REPORT.md#L130-L141",
+      "HelpDesk.Mvc/Controllers/TicketController.cs#L101-L135",
+      "HelpDesk.Mvc/Controllers/TicketController.cs#L76-L110"
+    ]
+  },
+  {
+    "test_id": "TC-04",
+    "category": "Unit Testing",
+    "query": "How are unit tests set up with Moq and xUnit?",
+    "status": "PASS",
+    "latency_ms": 1.0,
+    "top_source": "HelpDesk.Tests/UnitTest1.cs",
+    "source_matched": true,
+    "keyword_precision": 1.0,
+    "top_score": 0.8325,
+    "citations": [
+      "HelpDesk.Tests/UnitTest1.cs#L1-L10",
+      "RAG_KNOWLEDGE_ASSISTANT_REPORT.md#L142-L160",
+      "HelpDesk.Tests/Controllers/TicketControllerTests.cs#L1-L35"
+    ]
+  },
+  {
+    "test_id": "TC-05",
+    "category": "Deployment",
+    "query": "How to run the Web API and MVC applications locally?",
+    "status": "PASS",
+    "latency_ms": 1.01,
+    "top_source": "RAG_KNOWLEDGE_ASSISTANT_REPORT.md",
+    "source_matched": true,
+    "keyword_precision": 1.0,
+    "top_score": 1.0641,
+    "citations": [
+      "RAG_KNOWLEDGE_ASSISTANT_REPORT.md#L130-L141",
+      "RAG_KNOWLEDGE_ASSISTANT_REPORT.md#L142-L160",
+      "RAG_KNOWLEDGE_ASSISTANT_REPORT.md#L115-L129"
+    ]
+  }
+]

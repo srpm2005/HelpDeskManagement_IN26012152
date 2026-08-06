@@ -1,0 +1,30 @@
+@{
+    ViewData["Title"] = "Access Denied";
+}
+
+<div class="row justify-content-center py-5">
+    <div class="col-md-6 text-center">
+        <div class="card glass-card border-0 p-5">
+            <div class="card-body">
+                <div class="text-danger mb-4">
+                    <i class="bi bi-shield-slash fs-1 d-block mb-3" style="font-size: 5rem !important;"></i>
+                </div>
+                <h1 class="h2 font-weight-bold mb-3">Access Denied</h1>
+                <p class="text-secondary mb-4">
+                    You do not have permission to view this resource. This area is restricted based on system security permissions.
+                </p>
+                <div class="d-flex justify-content-center gap-3">
+                    <a asp-controller="Home" asp-action="Index" class="btn btn-primary-custom">
+                        <i class="bi bi-house-door-fill me-2"></i>Return Home
+                    </a>
+                    @if (User.Identity?.IsAuthenticated == false)
+                    {
+                        <a asp-controller="Account" asp-action="Login" class="btn btn-secondary-custom">
+                            <i class="bi bi-box-arrow-in-right me-2"></i>Sign In
+                        </a>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

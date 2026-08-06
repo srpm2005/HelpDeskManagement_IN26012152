@@ -1,0 +1,54 @@
+@model StudentRegistration.Models.Course
+@{
+    ViewData["Title"] = "Edit Course";
+}
+
+<div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+        <div class="card glass-card border-0 p-4">
+            <div class="card-body">
+                <div class="d-flex align-items-center mb-4">
+                    <a asp-action="Index" class="btn btn-sm btn-secondary-custom me-3 py-2 px-3">
+                        <i class="bi bi-arrow-left"></i>
+                    </a>
+                    <div>
+                        <h2 class="font-weight-bold h4 mb-0">Edit Course</h2>
+                        <p class="text-secondary mb-0 text-opacity-75" style="font-size: 0.9rem;">Modify course catalog details</p>
+                    </div>
+                </div>
+
+                <form asp-action="Edit" method="post">
+                    @Html.AntiForgeryToken()
+                    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+                    <input type="hidden" asp-for="Id" />
+
+                    <div class="form-floating mb-3">
+                        <input asp-for="Name" class="form-control" placeholder="Course Name" required />
+                        <label asp-for="Name">Course Name</label>
+                        <span asp-validation-for="Name" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-floating mb-3">
+                        <input asp-for="Credits" class="form-control" placeholder="Credits" type="number" min="1" max="10" required />
+                        <label asp-for="Credits">Credits</label>
+                        <span asp-validation-for="Credits" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-floating mb-4">
+                        <textarea asp-for="Description" class="form-control" placeholder="Description" style="height: 120px;" required></textarea>
+                        <label asp-for="Description">Course Description</label>
+                        <span asp-validation-for="Description" class="text-danger"></span>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary-custom w-100 py-3">
+                        Update Course
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @await Html.PartialAsync("_ValidationScriptsPartial")
+}

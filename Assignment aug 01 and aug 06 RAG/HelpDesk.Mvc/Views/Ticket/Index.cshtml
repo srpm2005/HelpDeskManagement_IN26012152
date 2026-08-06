@@ -1,0 +1,102 @@
+@model IEnumerable<HelpDesk.Mvc.Models.Ticket>
+@{
+    ViewData["Title"] = "All Support Tickets";
+    var selectedStatus = ViewBag.SelectedStatus as string ?? "All";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h2 class="mb-1">Support Tickets List</h2>
+        <p class="mb-0">View, filter, edit and manage employee support tickets.</p>
+    </div>
+    <a asp-action="Create" class="btn">
+        Raise New Ticket
+    </a>
+</div>
+
+<!-- Filter Bar -->
+<div class="card main-card p-3 mb-4">
+    <div class="row align-items-center">
+        <div class="col-md-7">
+            <div class="d-flex align-items-center gap-2">
+                <span class="me-2">Filter by Status:</span>
+                <div class="btn-group" role="group">
+                    <a asp-action="Index" asp-route-status="All" class="btn btn-sm">All</a>
+                    <a asp-action="Index" asp-route-status="Open" class="btn btn-sm">Open</a>
+                    <a asp-action="Index" asp-route-status="In Progress" class="btn btn-sm">In Progress</a>
+                    <a asp-action="Index" asp-route-status="Closed" class="btn btn-sm">Closed</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-5 text-md-end mt-3 mt-md-0">
+            <form method="get" asp-action="Index" class="d-inline-flex gap-2">
+                <select name="status" class="form-select form-select-sm w-auto" onchange="this.form.submit()">
+                    <option value="All" selected="@(selectedStatus == "All")">-- Filter Status --</option>
+                    <option value="Open" selected="@(selectedStatus == "Open")">Open</option>
+                    <option value="In Progress" selected="@(selectedStatus == "In Progress")">In Progress</option>
+                    <option value="Closed" selected="@(selectedStatus == "Closed")">Closed</option>
+                </select>
+                @if (selectedStatus != "All")
+                {
+                    <a asp-action="Index" class="btn btn-sm">Reset</a>
+                }
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Ticket Table -->
+<div class="card main-card p-4">
+    @if (Model.Any())
+    {
+        <div class="table-responsive">
+            <table class="table align-middle mb-0">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Title</th>
+                        <th>Description</th>
+                        <th>Priority</th>
+                        <th>Status</th>
+                        <th>Raised By</th>
+                        <th>Created Date</th>
+                        <th class="text-end">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>#@item.Id</td>
+                            <td>@item.Title</td>
+                            <td>
+                                @(item.Description.Length > 40 ? item.Description.Substring(0, 40) + "..." : item.Description)
+                            </td>
+                            <td>
+                                <span class="badge">@item.Priority</span>
+                            </td>
+                            <td>
+                                <span class="badge">@item.Status</span>
+                            </td>
+                            <td>@item.RaisedBy</td>
+                            <td>@item.CreatedDate.ToString("yyyy-MM-dd HH:mm")</td>
+                            <td class="text-end">
+                                <div class="btn-group" role="group">
+                                    <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm" title="View Details">Details</a>
+                                    <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm" title="Edit Ticket">Edit</a>
+                                    <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm" title="Delete Ticket">Delete</a>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+    else
+    {
+        <div class="text-center py-5 border">
+            <p class="mb-0">No matching tickets found.</p>
+        </div>
+    }
+</div>

@@ -1,0 +1,113 @@
+@model HelpDesk.Mvc.Models.DashboardViewModel
+@{
+    ViewData["Title"] = "Help Desk Dashboard";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h2 class="mb-1">Help Desk Dashboard</h2>
+        <p class="mb-0">Real-time overview of internal employee support requests.</p>
+    </div>
+    <a asp-action="Create" class="btn">
+        Raise New Ticket
+    </a>
+</div>
+
+<!-- Metrics Overview Cards -->
+<div class="row g-4 mb-5">
+    <div class="col-md-4">
+        <div class="card metric-card p-4">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <span>Total Tickets</span>
+                    <h2 class="mb-0 mt-1">@Model.TotalTickets</h2>
+                </div>
+                <div class="border p-3">
+                    <i class="bi bi-ticket-perforated fs-2"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card metric-card p-4">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <span>Open Tickets</span>
+                    <h2 class="mb-0 mt-1">@Model.OpenTickets</h2>
+                </div>
+                <div class="border p-3">
+                    <i class="bi bi-envelope-open fs-2"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card metric-card p-4">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <span>Closed Tickets</span>
+                    <h2 class="mb-0 mt-1">@Model.ClosedTickets</h2>
+                </div>
+                <div class="border p-3">
+                    <i class="bi bi-check2-circle fs-2"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Recent Tickets List -->
+<div class="card main-card p-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h5 class="mb-0">Recently Raised Support Tickets</h5>
+        <a asp-action="Index" class="btn btn-sm">View All Tickets</a>
+    </div>
+
+    @if (Model.RecentTickets.Any())
+    {
+        <div class="table-responsive">
+            <table class="table align-middle mb-0">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Title</th>
+                        <th>Priority</th>
+                        <th>Status</th>
+                        <th>Raised By</th>
+                        <th>Created Date</th>
+                        <th class="text-end">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var ticket in Model.RecentTickets)
+                    {
+                        <tr>
+                            <td>#@ticket.Id</td>
+                            <td>@ticket.Title</td>
+                            <td>
+                                <span class="badge">@ticket.Priority</span>
+                            </td>
+                            <td>
+                                <span class="badge">@ticket.Status</span>
+                            </td>
+                            <td>@ticket.RaisedBy</td>
+                            <td>@ticket.CreatedDate.ToString("yyyy-MM-dd HH:mm")</td>
+                            <td class="text-end">
+                                <a asp-action="Details" asp-route-id="@ticket.Id" class="btn btn-sm me-1">Details</a>
+                                <a asp-action="Edit" asp-route-id="@ticket.Id" class="btn btn-sm me-1">Edit</a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+    else
+    {
+        <div class="text-center py-5 border">
+            <p class="mb-0">No tickets found in system.</p>
+        </div>
+    }
+</div>

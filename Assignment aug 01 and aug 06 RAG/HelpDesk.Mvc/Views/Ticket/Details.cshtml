@@ -1,0 +1,55 @@
+@model HelpDesk.Mvc.Models.Ticket
+@{
+    ViewData["Title"] = "Ticket Details #" + Model.Id;
+}
+
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="mb-3">
+            <a asp-action="Index" class="text-decoration-none">
+                Back to Tickets List
+            </a>
+        </div>
+
+        <div class="card main-card p-4">
+            <div class="d-flex justify-content-between align-items-start border-bottom pb-3 mb-4">
+                <div>
+                    <span class="small">TICKET #@Model.Id</span>
+                    <h3 class="mb-1 mt-1">@Model.Title</h3>
+                    <span class="badge mt-2">@Model.Status</span>
+                </div>
+                <div class="text-end">
+                    <span class="small d-block">PRIORITY LEVEL</span>
+                    <span class="badge mt-1">@Model.Priority</span>
+                </div>
+            </div>
+
+            <div class="mb-4">
+                <span class="small d-block mb-1">Description</span>
+                <div class="p-3 border">
+                    <p class="mb-0" style="white-space: pre-wrap;">@Model.Description</p>
+                </div>
+            </div>
+
+            <div class="row g-3 border-top pt-3 mb-4">
+                <div class="col-md-6">
+                    <span class="small d-block">Raised By</span>
+                    <span>@Model.RaisedBy</span>
+                </div>
+                <div class="col-md-6">
+                    <span class="small d-block">Created Date</span>
+                    <span>@Model.CreatedDate.ToString("F")</span>
+                </div>
+            </div>
+
+            <div class="d-flex justify-content-end gap-2 border-top pt-3">
+                <a asp-action="Edit" asp-route-id="@Model.Id" class="btn px-4">
+                    Edit Ticket
+                </a>
+                <a asp-action="Delete" asp-route-id="@Model.Id" class="btn px-4">
+                    Delete
+                </a>
+            </div>
+        </div>
+    </div>
+</div>

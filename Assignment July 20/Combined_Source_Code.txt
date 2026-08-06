@@ -1,0 +1,757 @@
+/*
+================================================================================
+  STUDENT REGISTRATION WEB APP - COMPLETE SOURCE CODE SUBMISSION FILE
+  Framework: ASP.NET Core MVC with Entity Framework Core & ASP.NET Core Identity
+  Database: SQL Server (SQLEXPRESS)
+================================================================================
+*/
+
+// =============================================================================
+// FILE 1: Program.cs
+// =============================================================================
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using StudentRegistration.Data;
+using StudentRegistration.Models;
+
+var builder = WebApplication.CreateBuilder(args);
+
+// Add services to the container.
+builder.Services.AddControllersWithViews();
+
+// 1. Configure EF Core DbContext with SQL Server Connection String
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+// 2. Configure ASP.NET Core Identity with ApplicationUser and IdentityRole
+builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
+{
+    options.Password.RequireDigit = true;
+    options.Password.RequireLowercase = true;
+    options.Password.RequireUppercase = true;
+    options.Password.RequireNonAlphanumeric = true;
+    options.Password.RequiredLength = 6;
+})
+.AddEntityFrameworkStores<ApplicationDbContext>()
+.AddDefaultTokenProviders();
+
+// 3. Configure Cookies Redirect paths to match custom AccountController
+builder.Services.ConfigureApplicationCookie(options =>
+{
+    options.LoginPath = "/Account/Login";
+    options.AccessDeniedPath = "/Account/AccessDenied";
+});
+
+var app = builder.Build();
+
+// 4. Run database creation and seeding at startup
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    try
+    {
+        await DbInitializer.Initialize(services);
+    }
+    catch (Exception ex)
+    {
+        var logger = services.GetRequiredService<ILogger<Program>>();
+        logger.LogError(ex, "An error occurred while seeding the database.");
+    }
+}
+
+// Configure the HTTP request pipeline.
+if (!app.Environment.IsDevelopment())
+{
+    app.UseExceptionHandler("/Home/Error");
+    app.UseHsts();
+}
+
+app.UseHttpsRedirection();
+app.UseRouting();
+
+// 5. Enable Authentication & Authorization
+app.UseAuthentication();
+app.UseAuthorization();
+
+app.MapStaticAssets();
+
+app.MapControllerRoute(
+    name: "default",
+    pattern: "{controller=Home}/{action=Index}/{id?}")
+    .WithStaticAssets();
+
+app.Run();
+
+
+// =============================================================================
+// FILE 2: Models/Course.cs
+// =============================================================================
+namespace StudentRegistration.Models
+{
+    using System.Collections.Generic;
+    using System.ComponentModel.DataAnnotations;
+
+    public class Course
+    {
+        public int Id { get; set; }
+
+        [Required]
+        [Display(Name = "Course Name")]
+        public string Name { get; set; } = string.Empty;
+
+        [Required]
+        public string Description { get; set; } = string.Empty;
+
+        [Required]
+        [Range(1, 10, ErrorMessage = "Credits must be between 1 and 10.")]
+        public int Credits { get; set; }
+
+        // Navigation property for students registered in this course
+        public virtual ICollection<ApplicationUser> Students { get; set; } = new List<ApplicationUser>();
+    }
+}
+
+
+// =============================================================================
+// FILE 3: Models/ApplicationUser.cs
+// =============================================================================
+namespace StudentRegistration.Models
+{
+    using Microsoft.AspNetCore.Identity;
+    using System.ComponentModel.DataAnnotations;
+    using System.ComponentModel.DataAnnotations.Schema;
+
+    public class ApplicationUser : IdentityUser
+    {
+        [Required]
+        [Display(Name = "First Name")]
+        public string FirstName { get; set; } = string.Empty;
+
+        [Required]
+        [Display(Name = "Last Name")]
+        public string LastName { get; set; } = string.Empty;
+
+        [Display(Name = "Registered Course")]
+        public int? RegisteredCourseId { get; set; }
+
+        [ForeignKey("RegisteredCourseId")]
+        public virtual Course? RegisteredCourse { get; set; }
+    }
+}
+
+
+// =============================================================================
+// FILE 4: Models/ViewModels.cs
+// =============================================================================
+namespace StudentRegistration.Models
+{
+    using System.ComponentModel.DataAnnotations;
+
+    public class LoginViewModel
+    {
+        [Required]
+        [EmailAddress]
+        public string Email { get; set; } = string.Empty;
+
+        [Required]
+        [DataType(DataType.Password)]
+        public string Password { get; set; } = string.Empty;
+
+        [Display(Name = "Remember me?")]
+        public bool RememberMe { get; set; }
+    }
+
+    public class RegisterViewModel
+    {
+        [Required]
+        [EmailAddress]
+        [Display(Name = "Email Address")]
+        public string Email { get; set; } = string.Empty;
+
+        [Required]
+        [StringLength(100, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 6)]
+        [DataType(DataType.Password)]
+        public string Password { get; set; } = string.Empty;
+
+        [DataType(DataType.Password)]
+        [Display(Name = "Confirm password")]
+        [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
+        public string ConfirmPassword { get; set; } = string.Empty;
+
+        [Required]
+        [Display(Name = "First Name")]
+        public string FirstName { get; set; } = string.Empty;
+
+        [Required]
+        [Display(Name = "Last Name")]
+        public string LastName { get; set; } = string.Empty;
+    }
+
+    public class EditProfileViewModel
+    {
+        [Required]
+        [Display(Name = "First Name")]
+        public string FirstName { get; set; } = string.Empty;
+
+        [Required]
+        [Display(Name = "Last Name")]
+        public string LastName { get; set; } = string.Empty;
+    }
+}
+
+
+// =============================================================================
+// FILE 5: Data/ApplicationDbContext.cs
+// =============================================================================
+namespace StudentRegistration.Data
+{
+    using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+    using Microsoft.EntityFrameworkCore;
+    using StudentRegistration.Models;
+
+    public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
+    {
+        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
+            : base(options)
+        {
+        }
+
+        public DbSet<Course> Courses { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder builder)
+        {
+            base.OnModelCreating(builder);
+
+            // Configure relationship between Student (ApplicationUser) and Course
+            builder.Entity<ApplicationUser>()
+                .HasOne(u => u.RegisteredCourse)
+                .WithMany(c => c.Students)
+                .HasForeignKey(u => u.RegisteredCourseId)
+                .OnDelete(DeleteBehavior.SetNull);
+        }
+    }
+}
+
+
+// =============================================================================
+// FILE 6: Data/DbInitializer.cs
+// =============================================================================
+namespace StudentRegistration.Data
+{
+    using Microsoft.AspNetCore.Identity;
+    using Microsoft.Extensions.DependencyInjection;
+    using StudentRegistration.Models;
+    using System;
+    using System.Linq;
+    using System.Threading.Tasks;
+
+    public static class DbInitializer
+    {
+        public static async Task Initialize(IServiceProvider serviceProvider)
+        {
+            using var context = serviceProvider.GetRequiredService<ApplicationDbContext>();
+            
+            // Create database if not exists
+            context.Database.EnsureCreated();
+
+            var roleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+            var userManager = serviceProvider.GetRequiredService<UserManager<ApplicationUser>>();
+
+            // 1. Seed Roles
+            string[] roleNames = { "Admin", "Student" };
+            foreach (var roleName in roleNames)
+            {
+                var roleExist = await roleManager.RoleExistsAsync(roleName);
+                if (!roleExist)
+                {
+                    await roleManager.CreateAsync(new IdentityRole(roleName));
+                }
+            }
+
+            // 2. Seed Admin User
+            string adminEmail = "admin@studentreg.com";
+            var adminUser = await userManager.FindByEmailAsync(adminEmail);
+            if (adminUser == null)
+            {
+                var admin = new ApplicationUser
+                {
+                    UserName = adminEmail,
+                    Email = adminEmail,
+                    FirstName = "System",
+                    LastName = "Administrator",
+                    EmailConfirmed = true
+                };
+
+                var createAdminResult = await userManager.CreateAsync(admin, "AdminPassword123!");
+                if (createAdminResult.Succeeded)
+                {
+                    await userManager.AddToRoleAsync(admin, "Admin");
+                }
+            }
+
+            // 3. Seed Courses if none exist
+            if (!context.Courses.Any())
+            {
+                var courses = new Course[]
+                {
+                    new Course
+                    {
+                        Name = "Introduction to Computer Science",
+                        Credits = 4,
+                        Description = "Introduction to the basic concepts of programming, algorithms, and computational thinking using Python."
+                    },
+                    new Course
+                    {
+                        Name = "Web Development with ASP.NET Core",
+                        Credits = 3,
+                        Description = "Building modern web applications using HTML, CSS, JavaScript, and ASP.NET Core MVC."
+                    },
+                    new Course
+                    {
+                        Name = "Database Management Systems",
+                        Credits = 3,
+                        Description = "Relational database concepts, SQL queries, database design, and normalization using SQL Server."
+                    },
+                    new Course
+                    {
+                        Name = "Data Structures and Algorithms",
+                        Credits = 4,
+                        Description = "Analysis and implementation of basic data structures including lists, stacks, queues, trees, graphs, and sorting/searching algorithms."
+                    },
+                    new Course
+                    {
+                        Name = "Introduction to Software Engineering",
+                        Credits = 3,
+                        Description = "Software development lifecycle, design patterns, testing, agile methodologies, and Git version control."
+                    }
+                };
+
+                foreach (var course in courses)
+                {
+                    context.Courses.Add(course);
+                }
+                context.SaveChanges();
+            }
+        }
+    }
+}
+
+
+// =============================================================================
+// FILE 7: Controllers/AccountController.cs
+// =============================================================================
+namespace StudentRegistration.Controllers
+{
+    using Microsoft.AspNetCore.Identity;
+    using Microsoft.AspNetCore.Mvc;
+    using StudentRegistration.Models;
+    using System.Threading.Tasks;
+
+    public class AccountController : Controller
+    {
+        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly SignInManager<ApplicationUser> _signInManager;
+
+        public AccountController(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager)
+        {
+            _userManager = userManager;
+            _signInManager = signInManager;
+        }
+
+        [HttpGet]
+        public IActionResult Register()
+        {
+            if (User.Identity?.IsAuthenticated == true)
+            {
+                return RedirectToAction("Index", "Home");
+            }
+            return View();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Register(RegisterViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var user = new ApplicationUser
+                {
+                    UserName = model.Email,
+                    Email = model.Email,
+                    FirstName = model.FirstName,
+                    LastName = model.LastName
+                };
+
+                var result = await _userManager.CreateAsync(user, model.Password);
+                if (result.Succeeded)
+                {
+                    // Automatically assign Student role
+                    await _userManager.AddToRoleAsync(user, "Student");
+                    await _signInManager.SignInAsync(user, isPersistent: false);
+                    TempData["SuccessMessage"] = "Registration successful! Welcome to Student Registration.";
+                    return RedirectToAction("Index", "Profile");
+                }
+
+                foreach (var error in result.Errors)
+                {
+                    ModelState.AddModelError(string.Empty, error.Description);
+                }
+            }
+
+            return View(model);
+        }
+
+        [HttpGet]
+        public IActionResult Login(string? returnUrl = null)
+        {
+            if (User.Identity?.IsAuthenticated == true)
+            {
+                return RedirectToAction("Index", "Home");
+            }
+            ViewData["ReturnUrl"] = returnUrl;
+            return View();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Login(LoginViewModel model, string? returnUrl = null)
+        {
+            ViewData["ReturnUrl"] = returnUrl;
+            if (ModelState.IsValid)
+            {
+                var result = await _signInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, lockoutOnFailure: false);
+                if (result.Succeeded)
+                {
+                    var user = await _userManager.FindByEmailAsync(model.Email);
+                    if (user != null)
+                    {
+                        TempData["SuccessMessage"] = $"Welcome back, {user.FirstName}!";
+                        
+                        if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
+                        {
+                            return Redirect(returnUrl);
+                        }
+
+                        var roles = await _userManager.GetRolesAsync(user);
+                        if (roles.Contains("Admin"))
+                        {
+                            return RedirectToAction("Index", "Students");
+                        }
+                        else if (roles.Contains("Student"))
+                        {
+                            return RedirectToAction("Index", "Profile");
+                        }
+                    }
+                    return RedirectToAction("Index", "Home");
+                }
+
+                ModelState.AddModelError(string.Empty, "Invalid login attempt. Please check your email and password.");
+            }
+
+            return View(model);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Logout()
+        {
+            await _signInManager.SignOutAsync();
+            TempData["SuccessMessage"] = "You have been logged out successfully.";
+            return RedirectToAction("Index", "Home");
+        }
+
+        [HttpGet]
+        public IActionResult AccessDenied()
+        {
+            return View();
+        }
+    }
+}
+
+
+// =============================================================================
+// FILE 8: Controllers/CoursesController.cs
+// =============================================================================
+namespace StudentRegistration.Controllers
+{
+    using Microsoft.AspNetCore.Authorization;
+    using Microsoft.AspNetCore.Identity;
+    using Microsoft.AspNetCore.Mvc;
+    using Microsoft.EntityFrameworkCore;
+    using StudentRegistration.Data;
+    using StudentRegistration.Models;
+    using System.Linq;
+    using System.Threading.Tasks;
+
+    public class CoursesController : Controller
+    {
+        private readonly ApplicationDbContext _context;
+        private readonly UserManager<ApplicationUser> _userManager;
+
+        public CoursesController(ApplicationDbContext context, UserManager<ApplicationUser> userManager)
+        {
+            _context = context;
+            _userManager = userManager;
+        }
+
+        [AllowAnonymous]
+        public async Task<IActionResult> Index()
+        {
+            var courses = await _context.Courses.ToListAsync();
+            
+            if (User.Identity?.IsAuthenticated == true)
+            {
+                var user = await _userManager.GetUserAsync(User);
+                if (user != null)
+                {
+                    ViewBag.HasRegisteredCourse = user.RegisteredCourseId.HasValue;
+                    ViewBag.RegisteredCourseId = user.RegisteredCourseId;
+                    ViewBag.IsStudent = User.IsInRole("Student");
+                }
+            }
+
+            return View(courses);
+        }
+
+        [Authorize(Roles = "Admin")]
+        public IActionResult Create()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> Create([Bind("Id,Name,Description,Credits")] Course course)
+        {
+            if (ModelState.IsValid)
+            {
+                _context.Add(course);
+                await _context.SaveChangesAsync();
+                TempData["SuccessMessage"] = $"Course '{course.Name}' added successfully!";
+                return RedirectToAction(nameof(Index));
+            }
+            return View(course);
+        }
+
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> Edit(int? id)
+        {
+            if (id == null) return NotFound();
+            var course = await _context.Courses.FindAsync(id);
+            if (course == null) return NotFound();
+            return View(course);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Description,Credits")] Course course)
+        {
+            if (id != course.Id) return NotFound();
+
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    _context.Update(course);
+                    await _context.SaveChangesAsync();
+                    TempData["SuccessMessage"] = $"Course '{course.Name}' updated successfully!";
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!CourseExists(course.Id)) return NotFound();
+                    else throw;
+                }
+                return RedirectToAction(nameof(Index));
+            }
+            return View(course);
+        }
+
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> Delete(int? id)
+        {
+            if (id == null) return NotFound();
+            var course = await _context.Courses.FirstOrDefaultAsync(m => m.Id == id);
+            if (course == null) return NotFound();
+            return View(course);
+        }
+
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> DeleteConfirmed(int id)
+        {
+            var course = await _context.Courses.FindAsync(id);
+            if (course != null)
+            {
+                string courseName = course.Name;
+                _context.Courses.Remove(course);
+                await _context.SaveChangesAsync();
+                TempData["SuccessMessage"] = $"Course '{courseName}' deleted successfully!";
+            }
+            return RedirectToAction(nameof(Index));
+        }
+
+        private bool CourseExists(int id)
+        {
+            return _context.Courses.Any(e => e.Id == id);
+        }
+    }
+}
+
+
+// =============================================================================
+// FILE 9: Controllers/StudentsController.cs
+// =============================================================================
+namespace StudentRegistration.Controllers
+{
+    using Microsoft.AspNetCore.Authorization;
+    using Microsoft.AspNetCore.Identity;
+    using Microsoft.AspNetCore.Mvc;
+    using Microsoft.EntityFrameworkCore;
+    using StudentRegistration.Data;
+    using StudentRegistration.Models;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Threading.Tasks;
+
+    [Authorize(Roles = "Admin")]
+    public class StudentsController : Controller
+    {
+        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly ApplicationDbContext _context;
+
+        public StudentsController(UserManager<ApplicationUser> userManager, ApplicationDbContext context)
+        {
+            _userManager = userManager;
+            _context = context;
+        }
+
+        public async Task<IActionResult> Index()
+        {
+            var students = await _userManager.GetUsersInRoleAsync("Student");
+            var studentIds = students.Select(s => s.Id).ToList();
+            
+            var studentsWithCourses = await _context.Users
+                .Include(u => u.RegisteredCourse)
+                .Where(u => studentIds.Contains(u.Id))
+                .ToListAsync();
+
+            return View(studentsWithCourses);
+        }
+    }
+}
+
+
+// =============================================================================
+// FILE 10: Controllers/ProfileController.cs
+// =============================================================================
+namespace StudentRegistration.Controllers
+{
+    using Microsoft.AspNetCore.Authorization;
+    using Microsoft.AspNetCore.Identity;
+    using Microsoft.AspNetCore.Mvc;
+    using Microsoft.EntityFrameworkCore;
+    using StudentRegistration.Data;
+    using StudentRegistration.Models;
+    using System.Threading.Tasks;
+
+    [Authorize(Roles = "Student")]
+    public class ProfileController : Controller
+    {
+        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly ApplicationDbContext _context;
+
+        public ProfileController(UserManager<ApplicationUser> userManager, ApplicationDbContext context)
+        {
+            _userManager = userManager;
+            _context = context;
+        }
+
+        public async Task<IActionResult> Index()
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null) return Challenge();
+
+            var userWithCourse = await _context.Users
+                .Include(u => u.RegisteredCourse)
+                .FirstOrDefaultAsync(u => u.Id == user.Id);
+
+            return View(userWithCourse);
+        }
+
+        public async Task<IActionResult> Edit()
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null) return Challenge();
+
+            var model = new EditProfileViewModel
+            {
+                FirstName = user.FirstName,
+                LastName = user.LastName
+            };
+
+            return View(model);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(EditProfileViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var user = await _userManager.GetUserAsync(User);
+                if (user == null) return Challenge();
+
+                user.FirstName = model.FirstName;
+                user.LastName = model.LastName;
+
+                var result = await _userManager.UpdateAsync(user);
+                if (result.Succeeded)
+                {
+                    TempData["SuccessMessage"] = "Profile details updated successfully!";
+                    return RedirectToAction(nameof(Index));
+                }
+
+                foreach (var error in result.Errors)
+                {
+                    ModelState.AddModelError(string.Empty, error.Description);
+                }
+            }
+
+            return View(model);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> RegisterCourse(int courseId)
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null) return Challenge();
+
+            var dbUser = await _context.Users.FindAsync(user.Id);
+            if (dbUser == null) return NotFound();
+
+            // Constraint: Student can register for only one course
+            if (dbUser.RegisteredCourseId.HasValue)
+            {
+                TempData["ErrorMessage"] = "You are already registered for a course. You can only register for one course.";
+                return RedirectToAction("Index", "Courses");
+            }
+
+            var course = await _context.Courses.FindAsync(courseId);
+            if (course == null)
+            {
+                TempData["ErrorMessage"] = "The selected course does not exist.";
+                return RedirectToAction("Index", "Courses");
+            }
+
+            dbUser.RegisteredCourseId = courseId;
+            await _context.SaveChangesAsync();
+
+            TempData["SuccessMessage"] = $"Successfully registered for the course: '{course.Name}'!";
+            return RedirectToAction(nameof(Index));
+        }
+    }
+}

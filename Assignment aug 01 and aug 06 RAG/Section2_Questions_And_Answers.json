@@ -1,0 +1,149 @@
+{
+  "student_name": "SHRI RAM PRINCE MISHRA",
+  "registration_number": "IN26012152",
+  "github_url": "https://github.com/srpm2005/HelpDeskManagement_IN26012152",
+  "section_2a_document_qa": [
+    {
+      "id": "2A.1",
+      "question": "What is the objective of the HelpDesk Ticket Management application?",
+      "answer": "### Answer Summary\nThe **objective** of the Help Desk Ticket Management application is to provide an end-to-end enterprise solution for internal employees to submit, track, filter, and resolve IT support requests efficiently using ASP.NET Core 10.0 and SQL Server.\n\n#### 📍 Context Provenance & Citations\nAnswer synthesized from top matching snippets in: `RAG_KNOWLEDGE_ASSISTANT_REPORT.md` (Lines 1-1), `HelpDesk_Assignment_Report.md` (Lines 1-1), `HelpDesk_Assignment_Report.md` (Lines 6-11), `HelpDesk.Mvc/Models/Ticket.cs` (Lines 26-29)\n",
+      "citations": [
+        "RAG_KNOWLEDGE_ASSISTANT_REPORT.md#L1-L1",
+        "HelpDesk_Assignment_Report.md#L1-L1",
+        "HelpDesk_Assignment_Report.md#L6-L11",
+        "HelpDesk.Mvc/Models/Ticket.cs#L26-L29"
+      ]
+    },
+    {
+      "id": "2A.2",
+      "question": "Which technologies were used to develop the project?",
+      "answer": "### Answer Summary\nThe project follows a clean 3-tier decoupled architecture:\n\n1. **`HelpDesk.Api` (Web API Layer)**: Built with ASP.NET Core 10.0, EF Core, and SQL Server. Implements the Repository Pattern (`ITicketRepository`, `TicketRepository`).\n2. **`HelpDesk.Mvc` (MVC Frontend)**: ASP.NET Core MVC consuming the API strictly via `TicketService` (`HttpClient`). Follows a monochrome UI aesthetic.\n3. **`HelpDesk.Tests` (Unit Testing Layer)**: xUnit and Moq unit test project mocking `ITicketRepository` with 100% isolated test runs.\n\n#### 📍 Context Provenance & Citations\nAnswer synthesized from top matching snippets in: `HelpDesk.Mvc/appsettings.Development.json` (Lines 1-8), `HelpDesk.Api/appsettings.Development.json` (Lines 1-8), `README.md` (Lines 103-113), `RAG_KNOWLEDGE_ASSISTANT_REPORT.md` (Lines 39-49)\n",
+      "citations": [
+        "HelpDesk.Mvc/appsettings.Development.json#L1-L8",
+        "HelpDesk.Api/appsettings.Development.json#L1-L8",
+        "README.md#L103-L113",
+        "RAG_KNOWLEDGE_ASSISTANT_REPORT.md#L39-L49"
+      ]
+    },
+    {
+      "id": "2A.3",
+      "question": "Which database tables are used in the application?",
+      "answer": "### Answer Summary\nThe application utilizes Entity Framework Core with SQL Server (`SQLEXPRESS`). The primary database table is **`Tickets`**:\n\n| Column Name | Data Type | Nullable | Description |\n| :--- | :--- | :--- | :--- |\n| `Id` | `int` (PK) | No | Auto-increment primary key |\n| `Title` | `nvarchar(100)` | No | Short summary of support issue |\n| `Description` | `nvarchar(max)` | No | Full details of support request |\n| `Priority` | `nvarchar(20)` | No | Priority level (`Low`, `Medium`, `High`) |\n| `Status` | `nvarchar(20)` | No | Ticket status (`Open`, `In Progress`, `Closed`) |\n| `RaisedBy` | `nvarchar(50)` | No | Employee name raising the ticket |\n| `CreatedDate` | `datetime2` | No | Timestamp of ticket creation |\n\n#### 📍 Context Provenance & Citations\nAnswer synthesized from top matching snippets in: `RAG_KNOWLEDGE_ASSISTANT_REPORT.md` (Lines 115-129), `RAG_KNOWLEDGE_ASSISTANT_REPORT.md` (Lines 142-160), `README.md` (Lines 103-113), `RAG_KNOWLEDGE_ASSISTANT_REPORT.md` (Lines 130-141)\n",
+      "citations": [
+        "RAG_KNOWLEDGE_ASSISTANT_REPORT.md#L115-L129",
+        "RAG_KNOWLEDGE_ASSISTANT_REPORT.md#L142-L160",
+        "README.md#L103-L113",
+        "RAG_KNOWLEDGE_ASSISTANT_REPORT.md#L130-L141"
+      ]
+    },
+    {
+      "id": "2A.4",
+      "question": "What validations are implemented while creating a ticket?",
+      "answer": "### Answer Summary\nThe following **validation rules** are enforced:\n\n1. **Title**: Required, length between 3 and 100 characters.\n2. **Description**: Required, maximum length of 1000 characters.\n3. **RaisedBy**: Required, maximum length of 50 characters.\n4. **Priority**: Must be selected from Dropdown (`Low`, `Medium`, `High`). Default is `Low`.\n5. **Status**: Hardcoded to `Open` upon creation. Can be updated to `In Progress` or `Closed` during editing.\n\n#### 📍 Context Provenance & Citations\nAnswer synthesized from top matching snippets in: `RAG_KNOWLEDGE_ASSISTANT_REPORT.md` (Lines 115-129), `HelpDesk.Api/Data/HelpDeskDbContext.cs` (Lines 1-35), `RAG_KNOWLEDGE_ASSISTANT_REPORT.md` (Lines 39-49), `RAG_KNOWLEDGE_ASSISTANT_REPORT.md` (Lines 81-112)\n",
+      "citations": [
+        "RAG_KNOWLEDGE_ASSISTANT_REPORT.md#L115-L129",
+        "HelpDesk.Api/Data/HelpDeskDbContext.cs#L1-L35",
+        "RAG_KNOWLEDGE_ASSISTANT_REPORT.md#L39-L49",
+        "RAG_KNOWLEDGE_ASSISTANT_REPORT.md#L81-L112"
+      ]
+    },
+    {
+      "id": "2A.5",
+      "question": "What are the different ticket statuses supported by the application?",
+      "answer": "### Answer Summary\nTo run the Help Desk solution locally:\n\n1. **Start Web API** (Port 5000):\n   `dotnet run --project HelpDesk.Api/HelpDesk.Api.csproj --urls \"http://localhost:5000\"`\n\n2. **Start MVC Web App** (Port 5200):\n   `dotnet run --project HelpDesk.Mvc/HelpDesk.Mvc.csproj --urls \"http://localhost:5200\"`\n\n3. Access the Dashboard at `http://localhost:5200`.\n\n#### 📍 Context Provenance & Citations\nAnswer synthesized from top matching snippets in: `RAG_KNOWLEDGE_ASSISTANT_REPORT.md` (Lines 115-129), `HelpDesk.Mvc/Models/Ticket.cs` (Lines 26-29), `HelpDesk.Mvc/Controllers/TicketController.cs` (Lines 176-210), `HelpDesk.Mvc/Controllers/TicketController.cs` (Lines 51-85)\n",
+      "citations": [
+        "RAG_KNOWLEDGE_ASSISTANT_REPORT.md#L115-L129",
+        "HelpDesk.Mvc/Models/Ticket.cs#L26-L29",
+        "HelpDesk.Mvc/Controllers/TicketController.cs#L176-L210",
+        "HelpDesk.Mvc/Controllers/TicketController.cs#L51-L85"
+      ]
+    },
+    {
+      "id": "2A.6",
+      "question": "How does the MVC layer communicate with the Web API?",
+      "answer": "### Answer Summary\nThe **`HelpDesk.Mvc`** application consumes the REST Web API via a dedicated Service Layer:\n\n- **Service Implementation**: `HelpDesk.Mvc/Services/TicketService.cs` encapsulates `HttpClient` calls.\n- **API Methods Executed**:\n  - `GetAllTicketsAsync()`: Calls `GetFromJsonAsync<List<Ticket>>(\"api/Ticket/All\")`\n  - `GetTicketByIdAsync(id)`: Calls `GetFromJsonAsync<Ticket>(\"api/Ticket/{id}\")`\n  - `CreateTicketAsync(ticket)`: Calls `PostAsJsonAsync(\"api/Ticket\", ticket)`\n  - `UpdateTicketAsync(ticket)`: Calls `PutAsJsonAsync(\"api/Ticket/{id}\", ticket)`\n  - `DeleteTicketAsync(id)`: Calls `DeleteAsync(\"api/Ticket/{id}\")`\n  - `GetTicketsByStatusAsync(status)`: Calls `GetFromJsonAsync<List<Ticket>>(\"api/Ticket/Status/{status}\")`\n\nMVC controllers interact strictly through `TicketService` with **zero direct database access**.\n\n#### 📍 Context Provenance & Citations\nAnswer synthesized from top matching snippets in: `RAG_KNOWLEDGE_ASSISTANT_REPORT.md` (Lines 130-141), `HelpDesk.Mvc/Program.cs` (Lines 1-31), `RAG_KNOWLEDGE_ASSISTANT_REPORT.md` (Lines 142-160), `HelpDesk.Mvc/Controllers/TicketController.cs` (Lines 101-135)\n",
+      "citations": [
+        "RAG_KNOWLEDGE_ASSISTANT_REPORT.md#L130-L141",
+        "HelpDesk.Mvc/Program.cs#L1-L31",
+        "RAG_KNOWLEDGE_ASSISTANT_REPORT.md#L142-L160",
+        "HelpDesk.Mvc/Controllers/TicketController.cs#L101-L135"
+      ]
+    },
+    {
+      "id": "2A.7",
+      "question": "What REST API endpoints exist in the Web API layer?",
+      "answer": "### Answer Summary\nThe **HelpDesk Web API (`HelpDesk.Api`)** exposes standard RESTful endpoints for support ticket management:\n\n| HTTP Method | API Endpoint | Description |\n| :--- | :--- | :--- |\n| **GET** | `/api/Ticket/All` | Retrieve all support tickets |\n| **GET** | `/api/Ticket/{id}` | Get ticket details by ID |\n| **POST** | `/api/Ticket` | Create a new support ticket |\n| **PUT** | `/api/Ticket/{id}` | Update existing ticket |\n| **DELETE** | `/api/Ticket/{id}` | Delete ticket by ID |\n| **GET** | `/api/Ticket/Status/{status}` | Filter tickets by status (Open/In Progress/Closed) |\n\nThe controllers use `ITicketRepository` asynchronously for database operations.\n\n#### 📍 Context Provenance & Citations\nAnswer synthesized from top matching snippets in: `RAG_KNOWLEDGE_ASSISTANT_REPORT.md` (Lines 115-129), `README.md` (Lines 81-93), `RAG_KNOWLEDGE_ASSISTANT_REPORT.md` (Lines 130-141), `HelpDesk_Assignment_Report.md` (Lines 45-57)\n",
+      "citations": [
+        "RAG_KNOWLEDGE_ASSISTANT_REPORT.md#L115-L129",
+        "README.md#L81-L93",
+        "RAG_KNOWLEDGE_ASSISTANT_REPORT.md#L130-L141",
+        "HelpDesk_Assignment_Report.md#L45-L57"
+      ]
+    },
+    {
+      "id": "2A.8",
+      "question": "How are unit tests implemented and mocked using Moq?",
+      "answer": "### Answer Summary\nUnit testing is implemented in **`HelpDesk.Tests`**:\n\n- Built with **xUnit** and **Moq**.\n- Tests `TicketController` by mocking `ITicketRepository`.\n- All 13 test cases pass with zero SQL Server dependency.\n- Run command: `dotnet test HelpDesk.Tests/HelpDesk.Tests.csproj`\n\n#### 📍 Context Provenance & Citations\nAnswer synthesized from top matching snippets in: `HelpDesk.Tests/UnitTest1.cs` (Lines 1-10), `README.md` (Lines 94-102), `HelpDesk.Tests/Controllers/TicketControllerTests.cs` (Lines 1-35), `RAG_KNOWLEDGE_ASSISTANT_REPORT.md` (Lines 142-160)\n",
+      "citations": [
+        "HelpDesk.Tests/UnitTest1.cs#L1-L10",
+        "README.md#L94-L102",
+        "HelpDesk.Tests/Controllers/TicketControllerTests.cs#L1-L35",
+        "RAG_KNOWLEDGE_ASSISTANT_REPORT.md#L142-L160"
+      ]
+    },
+    {
+      "id": "2A.9",
+      "question": "How to run the Web API and MVC applications locally?",
+      "answer": "### Answer Summary\nTo run the Help Desk solution locally:\n\n1. **Start Web API** (Port 5000):\n   `dotnet run --project HelpDesk.Api/HelpDesk.Api.csproj --urls \"http://localhost:5000\"`\n\n2. **Start MVC Web App** (Port 5200):\n   `dotnet run --project HelpDesk.Mvc/HelpDesk.Mvc.csproj --urls \"http://localhost:5200\"`\n\n3. Access the Dashboard at `http://localhost:5200`.\n\n#### 📍 Context Provenance & Citations\nAnswer synthesized from top matching snippets in: `RAG_KNOWLEDGE_ASSISTANT_REPORT.md` (Lines 130-141), `RAG_KNOWLEDGE_ASSISTANT_REPORT.md` (Lines 142-160), `RAG_KNOWLEDGE_ASSISTANT_REPORT.md` (Lines 115-129), `README.md` (Lines 103-113)\n",
+      "citations": [
+        "RAG_KNOWLEDGE_ASSISTANT_REPORT.md#L130-L141",
+        "RAG_KNOWLEDGE_ASSISTANT_REPORT.md#L142-L160",
+        "RAG_KNOWLEDGE_ASSISTANT_REPORT.md#L115-L129",
+        "README.md#L103-L113"
+      ]
+    },
+    {
+      "id": "2A.10",
+      "question": "What business rules govern editing ticket priority and status?",
+      "answer": "### Answer Summary\nThe following **validation rules** are enforced:\n\n1. **Title**: Required, length between 3 and 100 characters.\n2. **Description**: Required, maximum length of 1000 characters.\n3. **RaisedBy**: Required, maximum length of 50 characters.\n4. **Priority**: Must be selected from Dropdown (`Low`, `Medium`, `High`). Default is `Low`.\n5. **Status**: Hardcoded to `Open` upon creation. Can be updated to `In Progress` or `Closed` during editing.\n\n#### 📍 Context Provenance & Citations\nAnswer synthesized from top matching snippets in: `HelpDesk.Tests/Controllers/TicketControllerTests.cs` (Lines 1-35), `HelpDesk.Api/Repositories/TicketRepository.cs` (Lines 26-60), `HelpDesk.Tests/Controllers/TicketControllerTests.cs` (Lines 26-60), `HelpDesk.Mvc/Models/Ticket.cs` (Lines 1-29)\n",
+      "citations": [
+        "HelpDesk.Tests/Controllers/TicketControllerTests.cs#L1-L35",
+        "HelpDesk.Api/Repositories/TicketRepository.cs#L26-L60",
+        "HelpDesk.Tests/Controllers/TicketControllerTests.cs#L26-L60",
+        "HelpDesk.Mvc/Models/Ticket.cs#L1-L29"
+      ]
+    }
+  ],
+  "section_2b_nondocument_qa": [
+    {
+      "id": "2B.1",
+      "question": "Who is the CEO of Microsoft?",
+      "answer": "The uploaded project documentation does not contain this information.",
+      "citations": []
+    },
+    {
+      "id": "2B.2",
+      "question": "What is Artificial Intelligence?",
+      "answer": "The uploaded project documentation does not contain this information.",
+      "citations": []
+    },
+    {
+      "id": "2B.3",
+      "question": "What is the capital of Australia?",
+      "answer": "The uploaded project documentation does not contain this information.",
+      "citations": []
+    },
+    {
+      "id": "2B.4",
+      "question": "Explain Machine Learning.",
+      "answer": "The uploaded project documentation does not contain this information.",
+      "citations": []
+    },
+    {
+      "id": "2B.5",
+      "question": "What is Cloud Computing?",
+      "answer": "The uploaded project documentation does not contain this information.",
+      "citations": []
+    }
+  ]
+}

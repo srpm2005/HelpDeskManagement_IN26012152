@@ -1,0 +1,70 @@
+@model HelpDesk.Mvc.Models.Ticket
+@{
+    ViewData["Title"] = "Raise New Support Ticket";
+}
+
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="mb-3">
+            <a asp-action="Index" class="text-decoration-none">
+                Back to Tickets List
+            </a>
+        </div>
+
+        <div class="card main-card p-4">
+            <h3 class="mb-1">Raise New Ticket</h3>
+            <p class="mb-4">Submit a support request to the internal Help Desk team.</p>
+
+            <form asp-action="Create" method="post">
+                <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                <div class="mb-3">
+                    <label asp-for="Title" class="form-label"></label>
+                    <input asp-for="Title" class="form-control" placeholder="e.g. Unable to connect to VPN" />
+                    <span asp-validation-for="Title" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Description" class="form-label"></label>
+                    <textarea asp-for="Description" class="form-control" rows="4" placeholder="Provide detailed information regarding the support request..."></textarea>
+                    <span asp-validation-for="Description" class="text-danger"></span>
+                </div>
+
+                <div class="row g-3 mb-3">
+                    <div class="col-md-6">
+                        <label asp-for="Priority" class="form-label">Priority Level</label>
+                        <select asp-for="Priority" class="form-select">
+                            <option value="Low">Low</option>
+                            <option value="Medium">Medium</option>
+                            <option value="High">High</option>
+                        </select>
+                        <span asp-validation-for="Priority" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-6">
+                        <label asp-for="RaisedBy" class="form-label">Raised By (Employee Name)</label>
+                        <input asp-for="RaisedBy" class="form-control" placeholder="e.g. Rahul Sharma" />
+                        <span asp-validation-for="RaisedBy" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="mb-4">
+                    <label class="form-label">Initial Status</label>
+                    <input type="text" class="form-control" value="Open (Hardcoded for new tickets)" readonly />
+                    <input type="hidden" asp-for="Status" value="Open" />
+                    <small class="form-text">New support requests are automatically marked as 'Open'.</small>
+                </div>
+
+                <div class="d-flex justify-content-end gap-2 border-top pt-3">
+                    <a asp-action="Index" class="btn px-4">Cancel</a>
+                    <button type="submit" class="btn px-4">
+                        Submit Ticket
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

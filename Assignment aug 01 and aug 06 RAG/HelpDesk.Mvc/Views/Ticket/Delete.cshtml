@@ -1,0 +1,42 @@
+@model HelpDesk.Mvc.Models.Ticket
+@{
+    ViewData["Title"] = "Delete Ticket #" + Model.Id;
+}
+
+<div class="row justify-content-center">
+    <div class="col-lg-6">
+        <div class="mb-3">
+            <a asp-action="Index" class="text-decoration-none">
+                Back to Tickets List
+            </a>
+        </div>
+
+        <div class="card main-card p-4 border">
+            <div class="text-center mb-3">
+                <div class="border d-inline-flex p-3 mb-2">
+                    <i class="bi bi-exclamation-triangle fs-1"></i>
+                </div>
+                <h4>Delete Support Ticket?</h4>
+                <p>Are you sure you want to permanently delete ticket #@Model.Id?</p>
+            </div>
+
+            <div class="p-3 border mb-4">
+                <p class="mb-1">@Model.Title</p>
+                <p class="mb-2 small">@Model.Description</p>
+                <div class="d-flex justify-content-between small">
+                    <span>Raised By: @Model.RaisedBy</span>
+                    <span>Status: @Model.Status</span>
+                </div>
+            </div>
+
+            <form asp-action="DeleteConfirmed" asp-route-id="@Model.Id" method="post">
+                <div class="d-flex justify-content-center gap-3">
+                    <a asp-action="Index" class="btn px-4">Cancel</a>
+                    <button type="submit" class="btn px-4">
+                        Yes, Delete Ticket
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

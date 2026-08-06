@@ -1,0 +1,93 @@
+@model StudentRegistration.Models.ApplicationUser
+@{
+    ViewData["Title"] = "My Profile";
+}
+
+<div class="row g-4">
+    <!-- Student Details Card -->
+    <div class="col-md-5">
+        <div class="card glass-card border-0 p-4 h-100">
+            <div class="card-body">
+                <div class="text-center mb-4">
+                    <div class="bg-indigo bg-opacity-10 p-4 rounded-circle text-indigo d-inline-flex mb-3" style="width: 100px; height: 100px; justify-content: center; align-items: center;">
+                        <i class="bi bi-person-fill fs-1"></i>
+                    </div>
+                    <h2 class="font-weight-bold h4">@Model.FirstName @Model.LastName</h2>
+                    <p class="text-secondary text-opacity-75 mb-0">Student Account</p>
+                </div>
+
+                <hr class="my-4 text-secondary text-opacity-25" />
+
+                <div class="mb-3">
+                    <label class="text-secondary text-opacity-75 small font-weight-bold text-uppercase d-block mb-1">Email Address</label>
+                    <div class="text-dark font-weight-medium">@Model.Email</div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="text-secondary text-opacity-75 small font-weight-bold text-uppercase d-block mb-1">First Name</label>
+                    <div class="text-dark font-weight-medium">@Model.FirstName</div>
+                </div>
+
+                <div class="mb-4">
+                    <label class="text-secondary text-opacity-75 small font-weight-bold text-uppercase d-block mb-1">Last Name</label>
+                    <div class="text-dark font-weight-medium">@Model.LastName</div>
+                </div>
+
+                <a asp-action="Edit" class="btn btn-secondary-custom w-100 py-2">
+                    <i class="bi bi-pencil-square me-2"></i>Edit Profile Details
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Course Registration Card -->
+    <div class="col-md-7">
+        <div class="card glass-card border-0 p-4 h-100">
+            <div class="card-body d-flex flex-column justify-content-between">
+                <div>
+                    <h3 class="font-weight-bold h4 mb-3">Enrolled Course</h3>
+                    <p class="text-secondary text-opacity-75 mb-4">Your current academic course enrollment status.</p>
+
+                    @if (Model.RegisteredCourse != null)
+                    {
+                        <div class="p-4 bg-success bg-opacity-5 rounded-4 border border-success border-opacity-25 mb-4">
+                            <div class="d-flex justify-content-between align-items-start mb-3">
+                                <h4 class="h5 font-weight-bold text-dark mb-0">@Model.RegisteredCourse.Name</h4>
+                                <span class="badge bg-success text-white px-3 py-2 rounded-pill font-weight-bold">
+                                    Enrolled
+                                </span>
+                            </div>
+                            <div class="mb-3">
+                                <span class="badge bg-indigo bg-opacity-10 text-indigo px-3 py-2 rounded-pill font-weight-bold">
+                                    <i class="bi bi-award me-1"></i>@Model.RegisteredCourse.Credits Credits
+                                </span>
+                            </div>
+                            <p class="text-secondary text-opacity-75 mb-0" style="font-size: 0.95rem; line-height: 1.5;">
+                                @Model.RegisteredCourse.Description
+                            </p>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="p-5 text-center border rounded-4 bg-light mb-4">
+                            <div class="text-secondary text-opacity-50 mb-3">
+                                <i class="bi bi-journal-album fs-1"></i>
+                            </div>
+                            <h4 class="h5 font-weight-bold mb-1">No Active Enrollment</h4>
+                            <p class="text-secondary text-opacity-75 small">You are not currently registered for any course.</p>
+                        </div>
+                    }
+                </div>
+
+                @if (Model.RegisteredCourse == null)
+                {
+                    <div>
+                        <a asp-controller="Courses" asp-action="Index" class="btn btn-primary-custom w-100 py-3">
+                            <i class="bi bi-plus-circle-fill me-2"></i>Select and Register for a Course
+                        </a>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>

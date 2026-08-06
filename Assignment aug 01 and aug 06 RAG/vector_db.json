@@ -1,0 +1,922 @@
+[
+  {
+    "source_file": "HelpDesk.Api/appsettings.Development.json",
+    "title": "HelpDesk.Api/appsettings.Development.json - Configuration & Project Settings",
+    "section": "Project Config",
+    "start_line": 1,
+    "end_line": 8,
+    "content": "File: HelpDesk.Api/appsettings.Development.json\n```\n{\n  \"Logging\": {\n    \"LogLevel\": {\n      \"Default\": \"Information\",\n      \"Microsoft.AspNetCore\": \"Warning\"\n    }\n  }\n}\n```",
+    "chunk_type": "config",
+    "id": "chunk_001"
+  },
+  {
+    "source_file": "HelpDesk.Api/appsettings.json",
+    "title": "HelpDesk.Api/appsettings.json - Configuration & Project Settings",
+    "section": "Project Config",
+    "start_line": 1,
+    "end_line": 12,
+    "content": "File: HelpDesk.Api/appsettings.json\n```\n{\n  \"Logging\": {\n    \"LogLevel\": {\n      \"Default\": \"Information\",\n      \"Microsoft.AspNetCore\": \"Warning\"\n    }\n  },\n  \"AllowedHosts\": \"*\",\n  \"ConnectionStrings\": {\n    \"DefaultConnection\": \"Server=.\\\\SQLEXPRESS;Database=HelpDeskDb;Trusted_Connection=True;TrustServerCertificate=True;MultipleActiveResultSets=true\"\n  }\n}\n```",
+    "chunk_type": "config",
+    "id": "chunk_002"
+  },
+  {
+    "source_file": "HelpDesk.Api/Controllers/TicketController.cs",
+    "title": "HelpDesk.Api/Controllers/TicketController.cs - TicketController (Lines 1-35)",
+    "section": "TicketController Code",
+    "start_line": 1,
+    "end_line": 35,
+    "content": "File: HelpDesk.Api/Controllers/TicketController.cs (Lines 1-35)\n```csharp\nusing HelpDesk.Api.Models;\nusing HelpDesk.Api.Repositories;\nusing Microsoft.AspNetCore.Mvc;\n\nnamespace HelpDesk.Api.Controllers\n{\n    [ApiController]\n    [Route(\"api/[controller]\")]\n    public class TicketController : ControllerBase\n    {\n        private readonly ITicketRepository _repository;\n\n        public TicketController(ITicketRepository repository)\n        {\n            _repository = repository;\n        }\n\n        // GET: /api/Ticket/All\n        [HttpGet(\"All\")]\n        public async Task<IActionResult> GetAllTickets()\n        {\n            var tickets = await _repository.GetAllTicketsAsync();\n            return Ok(tickets);\n        }\n\n        // GET: /api/Ticket/{id}\n        [HttpGet(\"{id:int}\")]\n        public async Task<IActionResult> GetTicketById(int id)\n        {\n            var ticket = await _repository.GetTicketByIdAsync(id);\n            if (ticket == null)\n            {\n                return NotFound(new { message = $\"Ticket with ID {id} not found.\" });\n            }\n            return Ok(ticket);\n```",
+    "chunk_type": "csharp_code",
+    "id": "chunk_003"
+  },
+  {
+    "source_file": "HelpDesk.Api/Controllers/TicketController.cs",
+    "title": "HelpDesk.Api/Controllers/TicketController.cs - TicketController (Lines 26-60)",
+    "section": "TicketController Code",
+    "start_line": 26,
+    "end_line": 60,
+    "content": "File: HelpDesk.Api/Controllers/TicketController.cs (Lines 26-60)\n```csharp\n// GET: /api/Ticket/{id}\n        [HttpGet(\"{id:int}\")]\n        public async Task<IActionResult> GetTicketById(int id)\n        {\n            var ticket = await _repository.GetTicketByIdAsync(id);\n            if (ticket == null)\n            {\n                return NotFound(new { message = $\"Ticket with ID {id} not found.\" });\n            }\n            return Ok(ticket);\n        }\n\n        // POST: /api/Ticket\n        [HttpPost]\n        public async Task<IActionResult> CreateTicket([FromBody] Ticket? ticket)\n        {\n            if (ticket == null)\n            {\n                return BadRequest(\"Ticket object cannot be null.\");\n            }\n\n            if (!ModelState.IsValid)\n            {\n                return BadRequest(ModelState);\n            }\n\n            var createdId = await _repository.CreateTicketAsync(ticket);\n            return Ok(createdId);\n        }\n\n        // PUT: /api/Ticket/{id}\n        [HttpPut(\"{id:int}\")]\n        public async Task<IActionResult> UpdateTicket(int id, [FromBody] Ticket ticket)\n        {\n            if (ticket == null || id != ticket.Id)\n```",
+    "chunk_type": "csharp_code",
+    "id": "chunk_004"
+  },
+  {
+    "source_file": "HelpDesk.Api/Controllers/TicketController.cs",
+    "title": "HelpDesk.Api/Controllers/TicketController.cs - TicketController (Lines 51-85)",
+    "section": "TicketController Code",
+    "start_line": 51,
+    "end_line": 85,
+    "content": "File: HelpDesk.Api/Controllers/TicketController.cs (Lines 51-85)\n```csharp\nvar createdId = await _repository.CreateTicketAsync(ticket);\n            return Ok(createdId);\n        }\n\n        // PUT: /api/Ticket/{id}\n        [HttpPut(\"{id:int}\")]\n        public async Task<IActionResult> UpdateTicket(int id, [FromBody] Ticket ticket)\n        {\n            if (ticket == null || id != ticket.Id)\n            {\n                return BadRequest(\"Invalid ticket data or ID mismatch.\");\n            }\n\n            var existingTicket = await _repository.GetTicketByIdAsync(id);\n            if (existingTicket == null)\n            {\n                return NotFound(new { message = $\"Ticket with ID {id} not found.\" });\n            }\n\n            await _repository.UpdateTicketAsync(ticket);\n            return Ok(new { message = \"Ticket updated successfully.\" });\n        }\n\n        // DELETE: /api/Ticket/{id}\n        [HttpDelete(\"{id:int}\")]\n        public async Task<IActionResult> DeleteTicket(int id)\n        {\n            var existingTicket = await _repository.GetTicketByIdAsync(id);\n            if (existingTicket == null)\n            {\n                return NotFound(new { message = $\"Ticket with ID {id} not found.\" });\n            }\n\n            await _repository.DeleteTicketAsync(id);\n```",
+    "chunk_type": "csharp_code",
+    "id": "chunk_005"
+  },
+  {
+    "source_file": "HelpDesk.Api/Controllers/TicketController.cs",
+    "title": "HelpDesk.Api/Controllers/TicketController.cs - TicketController (Lines 76-97)",
+    "section": "TicketController Code",
+    "start_line": 76,
+    "end_line": 97,
+    "content": "File: HelpDesk.Api/Controllers/TicketController.cs (Lines 76-97)\n```csharp\n[HttpDelete(\"{id:int}\")]\n        public async Task<IActionResult> DeleteTicket(int id)\n        {\n            var existingTicket = await _repository.GetTicketByIdAsync(id);\n            if (existingTicket == null)\n            {\n                return NotFound(new { message = $\"Ticket with ID {id} not found.\" });\n            }\n\n            await _repository.DeleteTicketAsync(id);\n            return Ok(new { message = \"Ticket deleted successfully.\" });\n        }\n\n        // GET: /api/Ticket/Status/{status}\n        [HttpGet(\"Status/{status}\")]\n        public async Task<IActionResult> GetTicketsByStatus(string status)\n        {\n            var tickets = await _repository.GetTicketsByStatusAsync(status);\n            return Ok(tickets);\n        }\n    }\n}\n```",
+    "chunk_type": "csharp_code",
+    "id": "chunk_006"
+  },
+  {
+    "source_file": "HelpDesk.Api/Data/HelpDeskDbContext.cs",
+    "title": "HelpDesk.Api/Data/HelpDeskDbContext.cs - HelpDeskDbContext (Lines 1-35)",
+    "section": "HelpDeskDbContext Code",
+    "start_line": 1,
+    "end_line": 35,
+    "content": "File: HelpDesk.Api/Data/HelpDeskDbContext.cs (Lines 1-35)\n```csharp\nusing HelpDesk.Api.Models;\nusing Microsoft.EntityFrameworkCore;\n\nnamespace HelpDesk.Api.Data\n{\n    public class HelpDeskDbContext : DbContext\n    {\n        public HelpDeskDbContext(DbContextOptions<HelpDeskDbContext> options) : base(options)\n        {\n        }\n\n        public DbSet<Ticket> Tickets { get; set; }\n\n        protected override void OnModelCreating(ModelBuilder modelBuilder)\n        {\n            base.OnModelCreating(modelBuilder);\n\n            // Pre-populate initial support tickets for testing and demonstration\n            modelBuilder.Entity<Ticket>().HasData(\n                new Ticket\n                {\n                    Id = 1,\n                    Title = \"VPN Access Issue\",\n                    Description = \"Unable to connect to company VPN from home network after recent update.\",\n                    Priority = \"High\",\n                    Status = \"Open\",\n                    RaisedBy = \"Rahul Sharma\",\n                    CreatedDate = new DateTime(2026, 8, 1, 10, 0, 0)\n                },\n                new Ticket\n                {\n                    Id = 2,\n                    Title = \"Software License Request\",\n                    Description = \"Requesting Visual Studio Enterprise license key for the upcoming project.\",\n                    Priority = \"Medium\",\n```",
+    "chunk_type": "csharp_code",
+    "id": "chunk_007"
+  },
+  {
+    "source_file": "HelpDesk.Api/Data/HelpDeskDbContext.cs",
+    "title": "HelpDesk.Api/Data/HelpDeskDbContext.cs - HelpDeskDbContext (Lines 26-53)",
+    "section": "HelpDeskDbContext Code",
+    "start_line": 26,
+    "end_line": 53,
+    "content": "File: HelpDesk.Api/Data/HelpDeskDbContext.cs (Lines 26-53)\n```csharp\nStatus = \"Open\",\n                    RaisedBy = \"Rahul Sharma\",\n                    CreatedDate = new DateTime(2026, 8, 1, 10, 0, 0)\n                },\n                new Ticket\n                {\n                    Id = 2,\n                    Title = \"Software License Request\",\n                    Description = \"Requesting Visual Studio Enterprise license key for the upcoming project.\",\n                    Priority = \"Medium\",\n                    Status = \"In Progress\",\n                    RaisedBy = \"Priya Patel\",\n                    CreatedDate = new DateTime(2026, 8, 2, 11, 30, 0)\n                },\n                new Ticket\n                {\n                    Id = 3,\n                    Title = \"Monitor Display Flicker\",\n                    Description = \"Secondary monitor flickers randomly when connected through the USB-C docking station.\",\n                    Priority = \"Low\",\n                    Status = \"Closed\",\n                    RaisedBy = \"Amit Kumar\",\n                    CreatedDate = new DateTime(2026, 7, 28, 14, 15, 0)\n                }\n            );\n        }\n    }\n}\n```",
+    "chunk_type": "csharp_code",
+    "id": "chunk_008"
+  },
+  {
+    "source_file": "HelpDesk.Api/Models/Ticket.cs",
+    "title": "HelpDesk.Api/Models/Ticket.cs - Ticket (Lines 1-13)",
+    "section": "Ticket Code",
+    "start_line": 1,
+    "end_line": 13,
+    "content": "File: HelpDesk.Api/Models/Ticket.cs (Lines 1-13)\n```csharp\nnamespace HelpDesk.Api.Models\n{\n    public class Ticket\n    {\n        public int Id { get; set; }\n        public string Title { get; set; } = string.Empty;\n        public string Description { get; set; } = string.Empty;\n        public string Priority { get; set; } = \"Low\"; // Low, Medium, High\n        public string Status { get; set; } = \"Open\";   // Open, In Progress, Closed\n        public string RaisedBy { get; set; } = string.Empty;\n        public DateTime CreatedDate { get; set; } = DateTime.Now;\n    }\n}\n```",
+    "chunk_type": "csharp_code",
+    "id": "chunk_009"
+  },
+  {
+    "source_file": "HelpDesk.Api/Program.cs",
+    "title": "HelpDesk.Api/Program.cs - Program (Lines 1-35)",
+    "section": "Program Code",
+    "start_line": 1,
+    "end_line": 35,
+    "content": "File: HelpDesk.Api/Program.cs (Lines 1-35)\n```csharp\nusing HelpDesk.Api.Data;\nusing HelpDesk.Api.Repositories;\nusing Microsoft.EntityFrameworkCore;\n\nvar builder = WebApplication.CreateBuilder(args);\n\n// API Controller configuration\nbuilder.Services.AddControllers();\n\n// SQL Server Database Context configuration\nbuilder.Services.AddDbContext<HelpDeskDbContext>(options =>\n    options.UseSqlServer(builder.Configuration.GetConnectionString(\"DefaultConnection\")));\n\n// Repository dependency registration\nbuilder.Services.AddScoped<ITicketRepository, TicketRepository>();\n\n// Enable CORS for client applications\nbuilder.Services.AddCors(options =>\n{\n    options.AddPolicy(\"AllowAll\", policy =>\n    {\n        policy.AllowAnyOrigin()\n              .AllowAnyMethod()\n              .AllowAnyHeader();\n    });\n});\n\nbuilder.Services.AddOpenApi();\n\nvar app = builder.Build();\n\n// Ensure local database schema and initial seed data are populated\nusing (var scope = app.Services.CreateScope())\n{\n    var dbContext = scope.ServiceProvider.GetRequiredService<HelpDeskDbContext>();\n```",
+    "chunk_type": "csharp_code",
+    "id": "chunk_010"
+  },
+  {
+    "source_file": "HelpDesk.Api/Program.cs",
+    "title": "HelpDesk.Api/Program.cs - Program (Lines 26-48)",
+    "section": "Program Code",
+    "start_line": 26,
+    "end_line": 48,
+    "content": "File: HelpDesk.Api/Program.cs (Lines 26-48)\n```csharp\n});\n\nbuilder.Services.AddOpenApi();\n\nvar app = builder.Build();\n\n// Ensure local database schema and initial seed data are populated\nusing (var scope = app.Services.CreateScope())\n{\n    var dbContext = scope.ServiceProvider.GetRequiredService<HelpDeskDbContext>();\n    dbContext.Database.EnsureCreated();\n}\n\nif (app.Environment.IsDevelopment())\n{\n    app.MapOpenApi();\n}\n\napp.UseCors(\"AllowAll\");\napp.UseAuthorization();\napp.MapControllers();\n\napp.Run();\n```",
+    "chunk_type": "csharp_code",
+    "id": "chunk_011"
+  },
+  {
+    "source_file": "HelpDesk.Api/Repositories/ITicketRepository.cs",
+    "title": "HelpDesk.Api/Repositories/ITicketRepository.cs - ITicketRepository (Lines 1-14)",
+    "section": "ITicketRepository Code",
+    "start_line": 1,
+    "end_line": 14,
+    "content": "File: HelpDesk.Api/Repositories/ITicketRepository.cs (Lines 1-14)\n```csharp\nusing HelpDesk.Api.Models;\n\nnamespace HelpDesk.Api.Repositories\n{\n    public interface ITicketRepository\n    {\n        Task<List<Ticket>> GetAllTicketsAsync();\n        Task<Ticket?> GetTicketByIdAsync(int id);\n        Task<int> CreateTicketAsync(Ticket ticket);\n        Task UpdateTicketAsync(Ticket ticket);\n        Task DeleteTicketAsync(int id);\n        Task<List<Ticket>> GetTicketsByStatusAsync(string status);\n    }\n}\n```",
+    "chunk_type": "csharp_code",
+    "id": "chunk_012"
+  },
+  {
+    "source_file": "HelpDesk.Api/Repositories/TicketRepository.cs",
+    "title": "HelpDesk.Api/Repositories/TicketRepository.cs - TicketRepository (Lines 1-35)",
+    "section": "TicketRepository Code",
+    "start_line": 1,
+    "end_line": 35,
+    "content": "File: HelpDesk.Api/Repositories/TicketRepository.cs (Lines 1-35)\n```csharp\nusing HelpDesk.Api.Data;\nusing HelpDesk.Api.Models;\nusing Microsoft.EntityFrameworkCore;\n\nnamespace HelpDesk.Api.Repositories\n{\n    public class TicketRepository : ITicketRepository\n    {\n        private readonly HelpDeskDbContext _context;\n\n        public TicketRepository(HelpDeskDbContext context)\n        {\n            _context = context;\n        }\n\n        public async Task<List<Ticket>> GetAllTicketsAsync()\n        {\n            return await _context.Tickets.AsNoTracking().ToListAsync();\n        }\n\n        public async Task<Ticket?> GetTicketByIdAsync(int id)\n        {\n            return await _context.Tickets.FindAsync(id);\n        }\n\n        public async Task<int> CreateTicketAsync(Ticket ticket)\n        {\n            if (ticket.CreatedDate == default)\n            {\n                ticket.CreatedDate = DateTime.Now;\n            }\n\n            await _context.Tickets.AddAsync(ticket);\n            await _context.SaveChangesAsync();\n            return ticket.Id;\n```",
+    "chunk_type": "csharp_code",
+    "id": "chunk_013"
+  },
+  {
+    "source_file": "HelpDesk.Api/Repositories/TicketRepository.cs",
+    "title": "HelpDesk.Api/Repositories/TicketRepository.cs - TicketRepository (Lines 26-60)",
+    "section": "TicketRepository Code",
+    "start_line": 26,
+    "end_line": 60,
+    "content": "File: HelpDesk.Api/Repositories/TicketRepository.cs (Lines 26-60)\n```csharp\npublic async Task<int> CreateTicketAsync(Ticket ticket)\n        {\n            if (ticket.CreatedDate == default)\n            {\n                ticket.CreatedDate = DateTime.Now;\n            }\n\n            await _context.Tickets.AddAsync(ticket);\n            await _context.SaveChangesAsync();\n            return ticket.Id;\n        }\n\n        public async Task UpdateTicketAsync(Ticket ticket)\n        {\n            var existingTicket = await _context.Tickets.FindAsync(ticket.Id);\n            if (existingTicket != null)\n            {\n                existingTicket.Title = ticket.Title;\n                existingTicket.Description = ticket.Description;\n                existingTicket.Priority = ticket.Priority;\n                existingTicket.Status = ticket.Status;\n                existingTicket.RaisedBy = ticket.RaisedBy;\n\n                _context.Tickets.Update(existingTicket);\n                await _context.SaveChangesAsync();\n            }\n        }\n\n        public async Task DeleteTicketAsync(int id)\n        {\n            var ticket = await _context.Tickets.FindAsync(id);\n            if (ticket != null)\n            {\n                _context.Tickets.Remove(ticket);\n                await _context.SaveChangesAsync();\n```",
+    "chunk_type": "csharp_code",
+    "id": "chunk_014"
+  },
+  {
+    "source_file": "HelpDesk.Api/Repositories/TicketRepository.cs",
+    "title": "HelpDesk.Api/Repositories/TicketRepository.cs - TicketRepository (Lines 51-72)",
+    "section": "TicketRepository Code",
+    "start_line": 51,
+    "end_line": 72,
+    "content": "File: HelpDesk.Api/Repositories/TicketRepository.cs (Lines 51-72)\n```csharp\n}\n        }\n\n        public async Task DeleteTicketAsync(int id)\n        {\n            var ticket = await _context.Tickets.FindAsync(id);\n            if (ticket != null)\n            {\n                _context.Tickets.Remove(ticket);\n                await _context.SaveChangesAsync();\n            }\n        }\n\n        public async Task<List<Ticket>> GetTicketsByStatusAsync(string status)\n        {\n            return await _context.Tickets\n                .Where(t => t.Status.ToLower() == status.ToLower())\n                .AsNoTracking()\n                .ToListAsync();\n        }\n    }\n}\n```",
+    "chunk_type": "csharp_code",
+    "id": "chunk_015"
+  },
+  {
+    "source_file": "HelpDesk.Mvc/appsettings.Development.json",
+    "title": "HelpDesk.Mvc/appsettings.Development.json - Configuration & Project Settings",
+    "section": "Project Config",
+    "start_line": 1,
+    "end_line": 8,
+    "content": "File: HelpDesk.Mvc/appsettings.Development.json\n```\n{\n  \"Logging\": {\n    \"LogLevel\": {\n      \"Default\": \"Information\",\n      \"Microsoft.AspNetCore\": \"Warning\"\n    }\n  }\n}\n```",
+    "chunk_type": "config",
+    "id": "chunk_016"
+  },
+  {
+    "source_file": "HelpDesk.Mvc/appsettings.json",
+    "title": "HelpDesk.Mvc/appsettings.json - Configuration & Project Settings",
+    "section": "Project Config",
+    "start_line": 1,
+    "end_line": 12,
+    "content": "File: HelpDesk.Mvc/appsettings.json\n```\n{\n  \"Logging\": {\n    \"LogLevel\": {\n      \"Default\": \"Information\",\n      \"Microsoft.AspNetCore\": \"Warning\"\n    }\n  },\n  \"AllowedHosts\": \"*\",\n  \"ApiSettings\": {\n    \"BaseUrl\": \"http://localhost:5000/\"\n  }\n}\n```",
+    "chunk_type": "config",
+    "id": "chunk_017"
+  },
+  {
+    "source_file": "HelpDesk.Mvc/Controllers/HomeController.cs",
+    "title": "HelpDesk.Mvc/Controllers/HomeController.cs - HomeController (Lines 1-12)",
+    "section": "HomeController Code",
+    "start_line": 1,
+    "end_line": 12,
+    "content": "File: HelpDesk.Mvc/Controllers/HomeController.cs (Lines 1-12)\n```csharp\nusing Microsoft.AspNetCore.Mvc;\n\nnamespace HelpDesk.Mvc.Controllers\n{\n    public class HomeController : Controller\n    {\n        public IActionResult Index()\n        {\n            return RedirectToAction(\"Dashboard\", \"Ticket\");\n        }\n    }\n}\n```",
+    "chunk_type": "csharp_code",
+    "id": "chunk_018"
+  },
+  {
+    "source_file": "HelpDesk.Mvc/Controllers/TicketController.cs",
+    "title": "HelpDesk.Mvc/Controllers/TicketController.cs - TicketController (Lines 1-35)",
+    "section": "TicketController Code",
+    "start_line": 1,
+    "end_line": 35,
+    "content": "File: HelpDesk.Mvc/Controllers/TicketController.cs (Lines 1-35)\n```csharp\nusing HelpDesk.Mvc.Models;\nusing HelpDesk.Mvc.Services;\nusing Microsoft.AspNetCore.Mvc;\n\nnamespace HelpDesk.Mvc.Controllers\n{\n    public class TicketController : Controller\n    {\n        private readonly TicketService _ticketService;\n\n        public TicketController(TicketService ticketService)\n        {\n            _ticketService = ticketService;\n        }\n\n        // GET: /Ticket/Dashboard\n        public async Task<IActionResult> Dashboard()\n        {\n            var allTickets = await _ticketService.GetAllTicketsAsync();\n            var model = new DashboardViewModel\n            {\n                TotalTickets = allTickets.Count,\n                OpenTickets = allTickets.Count(t => string.Equals(t.Status, \"Open\", StringComparison.OrdinalIgnoreCase)),\n                ClosedTickets = allTickets.Count(t => string.Equals(t.Status, \"Closed\", StringComparison.OrdinalIgnoreCase)),\n                RecentTickets = allTickets.OrderByDescending(t => t.CreatedDate).Take(5).ToList()\n            };\n\n            return View(model);\n        }\n\n        // GET: /Ticket or /Ticket/Index\n        public async Task<IActionResult> Index(string? status)\n        {\n            List<Ticket> tickets;\n            if (!string.IsNullOrEmpty(status) && status != \"All\")\n```",
+    "chunk_type": "csharp_code",
+    "id": "chunk_019"
+  },
+  {
+    "source_file": "HelpDesk.Mvc/Controllers/TicketController.cs",
+    "title": "HelpDesk.Mvc/Controllers/TicketController.cs - TicketController (Lines 26-60)",
+    "section": "TicketController Code",
+    "start_line": 26,
+    "end_line": 60,
+    "content": "File: HelpDesk.Mvc/Controllers/TicketController.cs (Lines 26-60)\n```csharp\n};\n\n            return View(model);\n        }\n\n        // GET: /Ticket or /Ticket/Index\n        public async Task<IActionResult> Index(string? status)\n        {\n            List<Ticket> tickets;\n            if (!string.IsNullOrEmpty(status) && status != \"All\")\n            {\n                tickets = await _ticketService.GetTicketsByStatusAsync(status);\n                ViewBag.SelectedStatus = status;\n            }\n            else\n            {\n                tickets = await _ticketService.GetAllTicketsAsync();\n                ViewBag.SelectedStatus = \"All\";\n            }\n\n            return View(tickets);\n        }\n\n        // GET: /Ticket/Details/5\n        public async Task<IActionResult> Details(int id)\n        {\n            var ticket = await _ticketService.GetTicketByIdAsync(id);\n            if (ticket == null)\n            {\n                return NotFound();\n            }\n            return View(ticket);\n        }\n\n        // GET: /Ticket/Create\n```",
+    "chunk_type": "csharp_code",
+    "id": "chunk_020"
+  },
+  {
+    "source_file": "HelpDesk.Mvc/Controllers/TicketController.cs",
+    "title": "HelpDesk.Mvc/Controllers/TicketController.cs - TicketController (Lines 51-85)",
+    "section": "TicketController Code",
+    "start_line": 51,
+    "end_line": 85,
+    "content": "File: HelpDesk.Mvc/Controllers/TicketController.cs (Lines 51-85)\n```csharp\n{\n            var ticket = await _ticketService.GetTicketByIdAsync(id);\n            if (ticket == null)\n            {\n                return NotFound();\n            }\n            return View(ticket);\n        }\n\n        // GET: /Ticket/Create\n        public IActionResult Create()\n        {\n            var ticket = new Ticket\n            {\n                Status = \"Open\" // Status is hardcoded to Open as per requirement\n            };\n            return View(ticket);\n        }\n\n        // POST: /Ticket/Create\n        [HttpPost]\n        [ValidateAntiForgeryToken]\n        public async Task<IActionResult> Create(Ticket ticket)\n        {\n            // Enforce status to Open\n            ticket.Status = \"Open\";\n\n            if (ModelState.IsValid)\n            {\n                var success = await _ticketService.CreateTicketAsync(ticket);\n                if (success)\n                {\n                    TempData[\"SuccessMessage\"] = \"Ticket raised successfully!\";\n                    return RedirectToAction(nameof(Index));\n                }\n```",
+    "chunk_type": "csharp_code",
+    "id": "chunk_021"
+  },
+  {
+    "source_file": "HelpDesk.Mvc/Controllers/TicketController.cs",
+    "title": "HelpDesk.Mvc/Controllers/TicketController.cs - TicketController (Lines 76-110)",
+    "section": "TicketController Code",
+    "start_line": 76,
+    "end_line": 110,
+    "content": "File: HelpDesk.Mvc/Controllers/TicketController.cs (Lines 76-110)\n```csharp\nticket.Status = \"Open\";\n\n            if (ModelState.IsValid)\n            {\n                var success = await _ticketService.CreateTicketAsync(ticket);\n                if (success)\n                {\n                    TempData[\"SuccessMessage\"] = \"Ticket raised successfully!\";\n                    return RedirectToAction(nameof(Index));\n                }\n                ModelState.AddModelError(\"\", \"Unable to create ticket. Please check Web API connection.\");\n            }\n            return View(ticket);\n        }\n\n        // GET: /Ticket/Edit/5\n        public async Task<IActionResult> Edit(int id)\n        {\n            var ticket = await _ticketService.GetTicketByIdAsync(id);\n            if (ticket == null)\n            {\n                return NotFound();\n            }\n            return View(ticket);\n        }\n\n        // POST: /Ticket/Edit/5\n        [HttpPost]\n        [ValidateAntiForgeryToken]\n        public async Task<IActionResult> Edit(int id, Ticket ticket)\n        {\n            if (id != ticket.Id)\n            {\n                return BadRequest();\n            }\n```",
+    "chunk_type": "csharp_code",
+    "id": "chunk_022"
+  },
+  {
+    "source_file": "HelpDesk.Mvc/Controllers/TicketController.cs",
+    "title": "HelpDesk.Mvc/Controllers/TicketController.cs - TicketController (Lines 101-135)",
+    "section": "TicketController Code",
+    "start_line": 101,
+    "end_line": 135,
+    "content": "File: HelpDesk.Mvc/Controllers/TicketController.cs (Lines 101-135)\n```csharp\n// POST: /Ticket/Edit/5\n        [HttpPost]\n        [ValidateAntiForgeryToken]\n        public async Task<IActionResult> Edit(int id, Ticket ticket)\n        {\n            if (id != ticket.Id)\n            {\n                return BadRequest();\n            }\n\n            if (ModelState.IsValid)\n            {\n                var success = await _ticketService.UpdateTicketAsync(ticket);\n                if (success)\n                {\n                    TempData[\"SuccessMessage\"] = \"Ticket updated successfully!\";\n                    return RedirectToAction(nameof(Index));\n                }\n                ModelState.AddModelError(\"\", \"Unable to update ticket. Please check Web API connection.\");\n            }\n            return View(ticket);\n        }\n\n        // GET: /Ticket/Delete/5\n        public async Task<IActionResult> Delete(int id)\n        {\n            var ticket = await _ticketService.GetTicketByIdAsync(id);\n            if (ticket == null)\n            {\n                return NotFound();\n            }\n            return View(ticket);\n        }\n```",
+    "chunk_type": "csharp_code",
+    "id": "chunk_023"
+  },
+  {
+    "source_file": "HelpDesk.Mvc/Controllers/TicketController.cs",
+    "title": "HelpDesk.Mvc/Controllers/TicketController.cs - TicketController (Lines 126-160)",
+    "section": "TicketController Code",
+    "start_line": 126,
+    "end_line": 160,
+    "content": "File: HelpDesk.Mvc/Controllers/TicketController.cs (Lines 126-160)\n```csharp\npublic async Task<IActionResult> Delete(int id)\n        {\n            var ticket = await _ticketService.GetTicketByIdAsync(id);\n            if (ticket == null)\n            {\n                return NotFound();\n            }\n            return View(ticket);\n        }\n\n        // POST: /Ticket/DeleteConfirmed/5\n        [HttpPost, ActionName(\"DeleteConfirmed\")]\n        [ValidateAntiForgeryToken]\n        public async Task<IActionResult> DeleteConfirmed(int id)\n        {\n            var success = await _ticketService.DeleteTicketAsync(id);\n            if (success)\n            {\n                TempData[\"SuccessMessage\"] = \"Ticket deleted successfully!\";\n            }\n            else\n            {\n                TempData[\"ErrorMessage\"] = \"Failed to delete ticket.\";\n            }\n            return RedirectToAction(nameof(Index));\n        }\n\n        // GET: /Ticket/KnowledgeAssistant\n        public IActionResult KnowledgeAssistant()\n        {\n            return View();\n        }\n\n        // POST: /Ticket/QueryKnowledgeAssistant\n        [HttpPost]\n```",
+    "chunk_type": "csharp_code",
+    "id": "chunk_024"
+  },
+  {
+    "source_file": "HelpDesk.Mvc/Controllers/TicketController.cs",
+    "title": "HelpDesk.Mvc/Controllers/TicketController.cs - TicketController (Lines 151-185)",
+    "section": "TicketController Code",
+    "start_line": 151,
+    "end_line": 185,
+    "content": "File: HelpDesk.Mvc/Controllers/TicketController.cs (Lines 151-185)\n```csharp\n}\n\n        // GET: /Ticket/KnowledgeAssistant\n        public IActionResult KnowledgeAssistant()\n        {\n            return View();\n        }\n\n        // POST: /Ticket/QueryKnowledgeAssistant\n        [HttpPost]\n        public IActionResult QueryKnowledgeAssistant([FromBody] KnowledgeQueryRequest request)\n        {\n            if (string.IsNullOrWhiteSpace(request?.Query))\n            {\n                return BadRequest(new { error = \"Query cannot be empty.\" });\n            }\n\n            try\n            {\n                var rootPath = Path.GetFullPath(Path.Combine(Directory.GetCurrentDirectory(), \"..\"));\n                var scriptPath = Path.Combine(rootPath, \"cli.py\");\n\n                var psi = new System.Diagnostics.ProcessStartInfo\n                {\n                    FileName = \"python\",\n                    Arguments = $\"\\\"{scriptPath}\\\" --json \\\"{request.Query.Replace(\"\\\"\", \"\\\\\\\"\")}\\\"\",\n                    RedirectStandardOutput = true,\n                    RedirectStandardError = true,\n                    UseShellExecute = false,\n                    CreateNoWindow = true,\n                    WorkingDirectory = rootPath,\n                    StandardOutputEncoding = System.Text.Encoding.UTF8\n                };\n\n                using var process = System.Diagnostics.Process.Start(psi);\n```",
+    "chunk_type": "csharp_code",
+    "id": "chunk_025"
+  },
+  {
+    "source_file": "HelpDesk.Mvc/Controllers/TicketController.cs",
+    "title": "HelpDesk.Mvc/Controllers/TicketController.cs - TicketController (Lines 176-210)",
+    "section": "TicketController Code",
+    "start_line": 176,
+    "end_line": 210,
+    "content": "File: HelpDesk.Mvc/Controllers/TicketController.cs (Lines 176-210)\n```csharp\nArguments = $\"\\\"{scriptPath}\\\" --json \\\"{request.Query.Replace(\"\\\"\", \"\\\\\\\"\")}\\\"\",\n                    RedirectStandardOutput = true,\n                    RedirectStandardError = true,\n                    UseShellExecute = false,\n                    CreateNoWindow = true,\n                    WorkingDirectory = rootPath,\n                    StandardOutputEncoding = System.Text.Encoding.UTF8\n                };\n\n                using var process = System.Diagnostics.Process.Start(psi);\n                if (process == null)\n                {\n                    return StatusCode(500, new { error = \"Failed to launch RAG process.\" });\n                }\n\n                string output = process.StandardOutput.ReadToEnd();\n                string error = process.StandardError.ReadToEnd();\n                process.WaitForExit(5000);\n\n                // Find valid JSON start in output\n                int jsonStart = output.IndexOf('{');\n                if (jsonStart >= 0)\n                {\n                    string jsonContent = output.Substring(jsonStart);\n                    return Content(jsonContent, \"application/json\");\n                }\n\n                return StatusCode(500, new { error = \"Failed to parse RAG response.\", details = error });\n            }\n            catch (Exception ex)\n            {\n                return StatusCode(500, new { error = ex.Message });\n            }\n        }\n    }\n```",
+    "chunk_type": "csharp_code",
+    "id": "chunk_026"
+  },
+  {
+    "source_file": "HelpDesk.Mvc/Controllers/TicketController.cs",
+    "title": "HelpDesk.Mvc/Controllers/TicketController.cs - TicketController (Lines 201-212)",
+    "section": "TicketController Code",
+    "start_line": 201,
+    "end_line": 212,
+    "content": "File: HelpDesk.Mvc/Controllers/TicketController.cs (Lines 201-212)\n```csharp\n}\n\n                return StatusCode(500, new { error = \"Failed to parse RAG response.\", details = error });\n            }\n            catch (Exception ex)\n            {\n                return StatusCode(500, new { error = ex.Message });\n            }\n        }\n    }\n}\n```",
+    "chunk_type": "csharp_code",
+    "id": "chunk_027"
+  },
+  {
+    "source_file": "HelpDesk.Mvc/Models/DashboardViewModel.cs",
+    "title": "HelpDesk.Mvc/Models/DashboardViewModel.cs - DashboardViewModel (Lines 1-10)",
+    "section": "DashboardViewModel Code",
+    "start_line": 1,
+    "end_line": 10,
+    "content": "File: HelpDesk.Mvc/Models/DashboardViewModel.cs (Lines 1-10)\n```csharp\nnamespace HelpDesk.Mvc.Models\n{\n    public class DashboardViewModel\n    {\n        public int TotalTickets { get; set; }\n        public int OpenTickets { get; set; }\n        public int ClosedTickets { get; set; }\n        public List<Ticket> RecentTickets { get; set; } = new List<Ticket>();\n    }\n}\n```",
+    "chunk_type": "csharp_code",
+    "id": "chunk_028"
+  },
+  {
+    "source_file": "HelpDesk.Mvc/Models/ErrorViewModel.cs",
+    "title": "HelpDesk.Mvc/Models/ErrorViewModel.cs - ErrorViewModel (Lines 1-8)",
+    "section": "ErrorViewModel Code",
+    "start_line": 1,
+    "end_line": 8,
+    "content": "File: HelpDesk.Mvc/Models/ErrorViewModel.cs (Lines 1-8)\n```csharp\nnamespace HelpDesk.Mvc.Models;\n\npublic class ErrorViewModel\n{\n    public string? RequestId { get; set; }\n\n    public bool ShowRequestId => !string.IsNullOrEmpty(RequestId);\n}\n```",
+    "chunk_type": "csharp_code",
+    "id": "chunk_029"
+  },
+  {
+    "source_file": "HelpDesk.Mvc/Models/KnowledgeQueryRequest.cs",
+    "title": "HelpDesk.Mvc/Models/KnowledgeQueryRequest.cs - KnowledgeQueryRequest (Lines 1-7)",
+    "section": "KnowledgeQueryRequest Code",
+    "start_line": 1,
+    "end_line": 7,
+    "content": "File: HelpDesk.Mvc/Models/KnowledgeQueryRequest.cs (Lines 1-7)\n```csharp\nnamespace HelpDesk.Mvc.Models\n{\n    public class KnowledgeQueryRequest\n    {\n        public string Query { get; set; } = string.Empty;\n    }\n}\n```",
+    "chunk_type": "csharp_code",
+    "id": "chunk_030"
+  },
+  {
+    "source_file": "HelpDesk.Mvc/Models/Ticket.cs",
+    "title": "HelpDesk.Mvc/Models/Ticket.cs - Ticket (Lines 1-29)",
+    "section": "Ticket Code",
+    "start_line": 1,
+    "end_line": 29,
+    "content": "File: HelpDesk.Mvc/Models/Ticket.cs (Lines 1-29)\n```csharp\nusing System.ComponentModel.DataAnnotations;\n\nnamespace HelpDesk.Mvc.Models\n{\n    public class Ticket\n    {\n        public int Id { get; set; }\n\n        [Required(ErrorMessage = \"Title is required\")]\n        [StringLength(100, ErrorMessage = \"Title cannot exceed 100 characters\")]\n        public string Title { get; set; } = string.Empty;\n\n        [Required(ErrorMessage = \"Description is required\")]\n        public string Description { get; set; } = string.Empty;\n\n        [Required(ErrorMessage = \"Priority is required\")]\n        public string Priority { get; set; } = \"Low\"; // Low, Medium, High\n\n        [Required(ErrorMessage = \"Status is required\")]\n        public string Status { get; set; } = \"Open\";   // Open, In Progress, Closed\n\n        [Required(ErrorMessage = \"Raised By is required\")]\n        [Display(Name = \"Raised By\")]\n        public string RaisedBy { get; set; } = string.Empty;\n\n        [Display(Name = \"Created Date\")]\n        public DateTime CreatedDate { get; set; } = DateTime.Now;\n    }\n}\n```",
+    "chunk_type": "csharp_code",
+    "id": "chunk_031"
+  },
+  {
+    "source_file": "HelpDesk.Mvc/Models/Ticket.cs",
+    "title": "HelpDesk.Mvc/Models/Ticket.cs - Ticket (Lines 26-29)",
+    "section": "Ticket Code",
+    "start_line": 26,
+    "end_line": 29,
+    "content": "File: HelpDesk.Mvc/Models/Ticket.cs (Lines 26-29)\n```csharp\n[Display(Name = \"Created Date\")]\n        public DateTime CreatedDate { get; set; } = DateTime.Now;\n    }\n}\n```",
+    "chunk_type": "csharp_code",
+    "id": "chunk_032"
+  },
+  {
+    "source_file": "HelpDesk.Mvc/Program.cs",
+    "title": "HelpDesk.Mvc/Program.cs - Program (Lines 1-31)",
+    "section": "Program Code",
+    "start_line": 1,
+    "end_line": 31,
+    "content": "File: HelpDesk.Mvc/Program.cs (Lines 1-31)\n```csharp\nusing HelpDesk.Mvc.Services;\n\nvar builder = WebApplication.CreateBuilder(args);\n\n// Register MVC views and controllers\nbuilder.Services.AddControllersWithViews();\n\n// Service Layer registration with HttpClient for Web API communication\nvar apiBaseUrl = builder.Configuration[\"ApiSettings:BaseUrl\"] ?? \"http://localhost:5000/\";\nbuilder.Services.AddHttpClient<TicketService>(client =>\n{\n    client.BaseAddress = new Uri(apiBaseUrl);\n});\n\nvar app = builder.Build();\n\nif (!app.Environment.IsDevelopment())\n{\n    app.UseDeveloperExceptionPage();\n}\n\napp.UseStaticFiles();\napp.UseRouting();\napp.UseAuthorization();\n\n// Default route configuration pointing to Ticket Dashboard\napp.MapControllerRoute(\n    name: \"default\",\n    pattern: \"{controller=Ticket}/{action=Dashboard}/{id?}\");\n\napp.Run();\n```",
+    "chunk_type": "csharp_code",
+    "id": "chunk_033"
+  },
+  {
+    "source_file": "HelpDesk.Mvc/Program.cs",
+    "title": "HelpDesk.Mvc/Program.cs - Program (Lines 26-31)",
+    "section": "Program Code",
+    "start_line": 26,
+    "end_line": 31,
+    "content": "File: HelpDesk.Mvc/Program.cs (Lines 26-31)\n```csharp\n// Default route configuration pointing to Ticket Dashboard\napp.MapControllerRoute(\n    name: \"default\",\n    pattern: \"{controller=Ticket}/{action=Dashboard}/{id?}\");\n\napp.Run();\n```",
+    "chunk_type": "csharp_code",
+    "id": "chunk_034"
+  },
+  {
+    "source_file": "HelpDesk.Mvc/Services/TicketService.cs",
+    "title": "HelpDesk.Mvc/Services/TicketService.cs - TicketService (Lines 1-35)",
+    "section": "TicketService Code",
+    "start_line": 1,
+    "end_line": 35,
+    "content": "File: HelpDesk.Mvc/Services/TicketService.cs (Lines 1-35)\n```csharp\nusing System.Net.Http.Json;\nusing HelpDesk.Mvc.Models;\n\nnamespace HelpDesk.Mvc.Services\n{\n    public class TicketService\n    {\n        private readonly HttpClient _httpClient;\n\n        public TicketService(HttpClient httpClient)\n        {\n            _httpClient = httpClient;\n        }\n\n        public async Task<List<Ticket>> GetAllTicketsAsync()\n        {\n            try\n            {\n                var tickets = await _httpClient.GetFromJsonAsync<List<Ticket>>(\"api/Ticket/All\");\n                return tickets ?? new List<Ticket>();\n            }\n            catch\n            {\n                return new List<Ticket>();\n            }\n        }\n\n        public async Task<Ticket?> GetTicketByIdAsync(int id)\n        {\n            try\n            {\n                return await _httpClient.GetFromJsonAsync<Ticket>($\"api/Ticket/{id}\");\n            }\n            catch\n            {\n```",
+    "chunk_type": "csharp_code",
+    "id": "chunk_035"
+  },
+  {
+    "source_file": "HelpDesk.Mvc/Services/TicketService.cs",
+    "title": "HelpDesk.Mvc/Services/TicketService.cs - TicketService (Lines 26-60)",
+    "section": "TicketService Code",
+    "start_line": 26,
+    "end_line": 60,
+    "content": "File: HelpDesk.Mvc/Services/TicketService.cs (Lines 26-60)\n```csharp\n}\n\n        public async Task<Ticket?> GetTicketByIdAsync(int id)\n        {\n            try\n            {\n                return await _httpClient.GetFromJsonAsync<Ticket>($\"api/Ticket/{id}\");\n            }\n            catch\n            {\n                return null;\n            }\n        }\n\n        public async Task<bool> CreateTicketAsync(Ticket ticket)\n        {\n            try\n            {\n                var response = await _httpClient.PostAsJsonAsync(\"api/Ticket\", ticket);\n                return response.IsSuccessStatusCode;\n            }\n            catch\n            {\n                return false;\n            }\n        }\n\n        public async Task<bool> UpdateTicketAsync(Ticket ticket)\n        {\n            try\n            {\n                var response = await _httpClient.PutAsJsonAsync($\"api/Ticket/{ticket.Id}\", ticket);\n                return response.IsSuccessStatusCode;\n            }\n            catch\n```",
+    "chunk_type": "csharp_code",
+    "id": "chunk_036"
+  },
+  {
+    "source_file": "HelpDesk.Mvc/Services/TicketService.cs",
+    "title": "HelpDesk.Mvc/Services/TicketService.cs - TicketService (Lines 51-85)",
+    "section": "TicketService Code",
+    "start_line": 51,
+    "end_line": 85,
+    "content": "File: HelpDesk.Mvc/Services/TicketService.cs (Lines 51-85)\n```csharp\n}\n\n        public async Task<bool> UpdateTicketAsync(Ticket ticket)\n        {\n            try\n            {\n                var response = await _httpClient.PutAsJsonAsync($\"api/Ticket/{ticket.Id}\", ticket);\n                return response.IsSuccessStatusCode;\n            }\n            catch\n            {\n                return false;\n            }\n        }\n\n        public async Task<bool> DeleteTicketAsync(int id)\n        {\n            try\n            {\n                var response = await _httpClient.DeleteAsync($\"api/Ticket/{id}\");\n                return response.IsSuccessStatusCode;\n            }\n            catch\n            {\n                return false;\n            }\n        }\n\n        public async Task<List<Ticket>> GetTicketsByStatusAsync(string status)\n        {\n            try\n            {\n                var tickets = await _httpClient.GetFromJsonAsync<List<Ticket>>($\"api/Ticket/Status/{Uri.EscapeDataString(status)}\");\n                return tickets ?? new List<Ticket>();\n            }\n```",
+    "chunk_type": "csharp_code",
+    "id": "chunk_037"
+  },
+  {
+    "source_file": "HelpDesk.Mvc/Services/TicketService.cs",
+    "title": "HelpDesk.Mvc/Services/TicketService.cs - TicketService (Lines 76-92)",
+    "section": "TicketService Code",
+    "start_line": 76,
+    "end_line": 92,
+    "content": "File: HelpDesk.Mvc/Services/TicketService.cs (Lines 76-92)\n```csharp\n}\n        }\n\n        public async Task<List<Ticket>> GetTicketsByStatusAsync(string status)\n        {\n            try\n            {\n                var tickets = await _httpClient.GetFromJsonAsync<List<Ticket>>($\"api/Ticket/Status/{Uri.EscapeDataString(status)}\");\n                return tickets ?? new List<Ticket>();\n            }\n            catch\n            {\n                return new List<Ticket>();\n            }\n        }\n    }\n}\n```",
+    "chunk_type": "csharp_code",
+    "id": "chunk_038"
+  },
+  {
+    "source_file": "HelpDesk.Mvc/wwwroot/lib/jquery-validation/LICENSE.md",
+    "title": "HelpDesk.Mvc/wwwroot/lib/jquery-validation/LICENSE.md - General Documentation",
+    "section": "General Documentation",
+    "start_line": 1,
+    "end_line": 22,
+    "content": "The MIT License (MIT)\n=====================\n\nCopyright J\u00f6rn Zaefferer\n\nPermission is hereby granted, free of charge, to any person obtaining a copy\nof this software and associated documentation files (the \"Software\"), to deal\nin the Software without restriction, including without limitation the rights\nto use, copy, modify, merge, publish, distribute, sublicense, and/or sell\ncopies of the Software, and to permit persons to whom the Software is\nfurnished to do so, subject to the following conditions:\n\nThe above copyright notice and this permission notice shall be included in\nall copies or substantial portions of the Software.\n\nTHE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR\nIMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,\nFITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE\nAUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER\nLIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,\nOUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN\nTHE SOFTWARE.",
+    "chunk_type": "markdown",
+    "id": "chunk_039"
+  },
+  {
+    "source_file": "HelpDesk.Tests/Controllers/TicketControllerTests.cs",
+    "title": "HelpDesk.Tests/Controllers/TicketControllerTests.cs - TicketControllerTests (Lines 1-35)",
+    "section": "TicketControllerTests Code",
+    "start_line": 1,
+    "end_line": 35,
+    "content": "File: HelpDesk.Tests/Controllers/TicketControllerTests.cs (Lines 1-35)\n```csharp\nusing HelpDesk.Api.Controllers;\nusing HelpDesk.Api.Models;\nusing HelpDesk.Api.Repositories;\nusing Microsoft.AspNetCore.Mvc;\nusing Moq;\nusing Xunit;\n\nnamespace HelpDesk.Tests.Controllers\n{\n    public class TicketControllerTests\n    {\n        private readonly Mock<ITicketRepository> _mockRepo;\n        private readonly TicketController _controller;\n\n        public TicketControllerTests()\n        {\n            _mockRepo = new Mock<ITicketRepository>();\n            _controller = new TicketController(_mockRepo.Object);\n        }\n\n        // ==========================================\n        // Mandatory Test Cases (1 to 6)\n        // ==========================================\n\n        [Fact]\n        public async Task GetAllTickets_ReturnsOkResult_WhenTicketExist()\n        {\n            // Arrange\n            var sampleTickets = new List<Ticket>\n            {\n                new Ticket { Id = 1, Title = \"VPN Issue\", Priority = \"High\", Status = \"Open\", RaisedBy = \"Rahul\" },\n                new Ticket { Id = 2, Title = \"License Request\", Priority = \"Low\", Status = \"Closed\", RaisedBy = \"Priya\" }\n            };\n            _mockRepo.Setup(repo => repo.GetAllTicketsAsync()).ReturnsAsync(sampleTickets);\n```",
+    "chunk_type": "csharp_code",
+    "id": "chunk_040"
+  },
+  {
+    "source_file": "HelpDesk.Tests/Controllers/TicketControllerTests.cs",
+    "title": "HelpDesk.Tests/Controllers/TicketControllerTests.cs - TicketControllerTests (Lines 26-60)",
+    "section": "TicketControllerTests Code",
+    "start_line": 26,
+    "end_line": 60,
+    "content": "File: HelpDesk.Tests/Controllers/TicketControllerTests.cs (Lines 26-60)\n```csharp\npublic async Task GetAllTickets_ReturnsOkResult_WhenTicketExist()\n        {\n            // Arrange\n            var sampleTickets = new List<Ticket>\n            {\n                new Ticket { Id = 1, Title = \"VPN Issue\", Priority = \"High\", Status = \"Open\", RaisedBy = \"Rahul\" },\n                new Ticket { Id = 2, Title = \"License Request\", Priority = \"Low\", Status = \"Closed\", RaisedBy = \"Priya\" }\n            };\n            _mockRepo.Setup(repo => repo.GetAllTicketsAsync()).ReturnsAsync(sampleTickets);\n\n            // Act\n            var result = await _controller.GetAllTickets();\n\n            // Assert\n            var okResult = Assert.IsType<OkObjectResult>(result);\n            var returnedTickets = Assert.IsAssignableFrom<List<Ticket>>(okResult.Value);\n            Assert.Equal(2, returnedTickets.Count);\n        }\n\n        [Fact]\n        public async Task GetTicketById_ReturnsOkResult_WhenTicketExists()\n        {\n            // Arrange\n            var ticket = new Ticket { Id = 1, Title = \"VPN Issue\", Priority = \"High\", Status = \"Open\", RaisedBy = \"Rahul\" };\n            _mockRepo.Setup(repo => repo.GetTicketByIdAsync(1)).ReturnsAsync(ticket);\n\n            // Act\n            var result = await _controller.GetTicketById(1);\n\n            // Assert\n            var okResult = Assert.IsType<OkObjectResult>(result);\n            var returnedTicket = Assert.IsType<Ticket>(okResult.Value);\n            Assert.Equal(1, returnedTicket.Id);\n            Assert.Equal(\"VPN Issue\", returnedTicket.Title);\n        }\n```",
+    "chunk_type": "csharp_code",
+    "id": "chunk_041"
+  },
+  {
+    "source_file": "HelpDesk.Tests/Controllers/TicketControllerTests.cs",
+    "title": "HelpDesk.Tests/Controllers/TicketControllerTests.cs - TicketControllerTests (Lines 51-85)",
+    "section": "TicketControllerTests Code",
+    "start_line": 51,
+    "end_line": 85,
+    "content": "File: HelpDesk.Tests/Controllers/TicketControllerTests.cs (Lines 51-85)\n```csharp\n// Act\n            var result = await _controller.GetTicketById(1);\n\n            // Assert\n            var okResult = Assert.IsType<OkObjectResult>(result);\n            var returnedTicket = Assert.IsType<Ticket>(okResult.Value);\n            Assert.Equal(1, returnedTicket.Id);\n            Assert.Equal(\"VPN Issue\", returnedTicket.Title);\n        }\n\n        [Fact]\n        public async Task GetTicketById_ReturnsNotFound_WhenTicketDoesNotExist()\n        {\n            // Arrange\n            _mockRepo.Setup(repo => repo.GetTicketByIdAsync(999)).ReturnsAsync((Ticket?)null);\n\n            // Act\n            var result = await _controller.GetTicketById(999);\n\n            // Assert\n            Assert.IsType<NotFoundObjectResult>(result);\n        }\n\n        [Fact]\n        public async Task CreateTicket_ReturnsOkResult_WhenTicketIsCreatedSuccessfully()\n        {\n            // Arrange\n            var newTicket = new Ticket { Title = \"Printer Offline\", Description = \"3rd floor printer\", Priority = \"Medium\", Status = \"Open\", RaisedBy = \"Amit\" };\n            _mockRepo.Setup(repo => repo.CreateTicketAsync(newTicket)).ReturnsAsync(10);\n\n            // Act\n            var result = await _controller.CreateTicket(newTicket);\n\n            // Assert\n```",
+    "chunk_type": "csharp_code",
+    "id": "chunk_042"
+  },
+  {
+    "source_file": "HelpDesk.Tests/Controllers/TicketControllerTests.cs",
+    "title": "HelpDesk.Tests/Controllers/TicketControllerTests.cs - TicketControllerTests (Lines 76-110)",
+    "section": "TicketControllerTests Code",
+    "start_line": 76,
+    "end_line": 110,
+    "content": "File: HelpDesk.Tests/Controllers/TicketControllerTests.cs (Lines 76-110)\n```csharp\npublic async Task CreateTicket_ReturnsOkResult_WhenTicketIsCreatedSuccessfully()\n        {\n            // Arrange\n            var newTicket = new Ticket { Title = \"Printer Offline\", Description = \"3rd floor printer\", Priority = \"Medium\", Status = \"Open\", RaisedBy = \"Amit\" };\n            _mockRepo.Setup(repo => repo.CreateTicketAsync(newTicket)).ReturnsAsync(10);\n\n            // Act\n            var result = await _controller.CreateTicket(newTicket);\n\n            // Assert\n            var okResult = Assert.IsType<OkObjectResult>(result);\n            Assert.Equal(10, okResult.Value);\n        }\n\n        [Fact]\n        public async Task CreateTicket_ReturnsBadRequest_WhenTicketIsNull()\n        {\n            // Act\n            var result = await _controller.CreateTicket(null);\n\n            // Assert\n            Assert.IsType<BadRequestObjectResult>(result);\n        }\n\n        [Fact]\n        public async Task GetTicketsByStatus_ReturnsOkResult_WhenMatchingTicketsExist()\n        {\n            // Arrange\n            var openTickets = new List<Ticket>\n            {\n                new Ticket { Id = 1, Title = \"VPN Issue\", Status = \"Open\" },\n                new Ticket { Id = 3, Title = \"Network Slow\", Status = \"Open\" }\n            };\n            _mockRepo.Setup(repo => repo.GetTicketsByStatusAsync(\"Open\")).ReturnsAsync(openTickets);\n```",
+    "chunk_type": "csharp_code",
+    "id": "chunk_043"
+  },
+  {
+    "source_file": "HelpDesk.Tests/Controllers/TicketControllerTests.cs",
+    "title": "HelpDesk.Tests/Controllers/TicketControllerTests.cs - TicketControllerTests (Lines 101-135)",
+    "section": "TicketControllerTests Code",
+    "start_line": 101,
+    "end_line": 135,
+    "content": "File: HelpDesk.Tests/Controllers/TicketControllerTests.cs (Lines 101-135)\n```csharp\npublic async Task GetTicketsByStatus_ReturnsOkResult_WhenMatchingTicketsExist()\n        {\n            // Arrange\n            var openTickets = new List<Ticket>\n            {\n                new Ticket { Id = 1, Title = \"VPN Issue\", Status = \"Open\" },\n                new Ticket { Id = 3, Title = \"Network Slow\", Status = \"Open\" }\n            };\n            _mockRepo.Setup(repo => repo.GetTicketsByStatusAsync(\"Open\")).ReturnsAsync(openTickets);\n\n            // Act\n            var result = await _controller.GetTicketsByStatus(\"Open\");\n\n            // Assert\n            var okResult = Assert.IsType<OkObjectResult>(result);\n            var returnedTickets = Assert.IsAssignableFrom<List<Ticket>>(okResult.Value);\n            Assert.Equal(2, returnedTickets.Count);\n        }\n\n        // ==========================================\n        // Optional Test Cases (7 to 12)\n        // ==========================================\n\n        [Fact]\n        public async Task UpdateTicket_ReturnsOkResult_WhenUpdateIsSuccessful()\n        {\n            // Arrange\n            var existingTicket = new Ticket { Id = 1, Title = \"VPN Issue\", Status = \"Open\" };\n            var updatedTicket = new Ticket { Id = 1, Title = \"VPN Issue Fixed\", Status = \"Closed\" };\n\n            _mockRepo.Setup(repo => repo.GetTicketByIdAsync(1)).ReturnsAsync(existingTicket);\n            _mockRepo.Setup(repo => repo.UpdateTicketAsync(updatedTicket)).Returns(Task.CompletedTask);\n\n            // Act\n            var result = await _controller.UpdateTicket(1, updatedTicket);\n```",
+    "chunk_type": "csharp_code",
+    "id": "chunk_044"
+  },
+  {
+    "source_file": "HelpDesk.Tests/Controllers/TicketControllerTests.cs",
+    "title": "HelpDesk.Tests/Controllers/TicketControllerTests.cs - TicketControllerTests (Lines 126-160)",
+    "section": "TicketControllerTests Code",
+    "start_line": 126,
+    "end_line": 160,
+    "content": "File: HelpDesk.Tests/Controllers/TicketControllerTests.cs (Lines 126-160)\n```csharp\n{\n            // Arrange\n            var existingTicket = new Ticket { Id = 1, Title = \"VPN Issue\", Status = \"Open\" };\n            var updatedTicket = new Ticket { Id = 1, Title = \"VPN Issue Fixed\", Status = \"Closed\" };\n\n            _mockRepo.Setup(repo => repo.GetTicketByIdAsync(1)).ReturnsAsync(existingTicket);\n            _mockRepo.Setup(repo => repo.UpdateTicketAsync(updatedTicket)).Returns(Task.CompletedTask);\n\n            // Act\n            var result = await _controller.UpdateTicket(1, updatedTicket);\n\n            // Assert\n            Assert.IsType<OkObjectResult>(result);\n        }\n\n        [Fact]\n        public async Task UpdateTicket_ReturnsNotFound_WhenTicketDoesNotExist()\n        {\n            // Arrange\n            var updatedTicket = new Ticket { Id = 999, Title = \"Non-existent Ticket\", Status = \"Closed\" };\n            _mockRepo.Setup(repo => repo.GetTicketByIdAsync(999)).ReturnsAsync((Ticket?)null);\n\n            // Act\n            var result = await _controller.UpdateTicket(999, updatedTicket);\n\n            // Assert\n            Assert.IsType<NotFoundObjectResult>(result);\n        }\n\n        [Fact]\n        public async Task DeleteTicket_ReturnsOkResult_WhenTicketIsDeletedSuccessfully()\n        {\n            // Arrange\n            var existingTicket = new Ticket { Id = 1, Title = \"VPN Issue\", Status = \"Open\" };\n            _mockRepo.Setup(repo => repo.GetTicketByIdAsync(1)).ReturnsAsync(existingTicket);\n```",
+    "chunk_type": "csharp_code",
+    "id": "chunk_045"
+  },
+  {
+    "source_file": "HelpDesk.Tests/Controllers/TicketControllerTests.cs",
+    "title": "HelpDesk.Tests/Controllers/TicketControllerTests.cs - TicketControllerTests (Lines 151-185)",
+    "section": "TicketControllerTests Code",
+    "start_line": 151,
+    "end_line": 185,
+    "content": "File: HelpDesk.Tests/Controllers/TicketControllerTests.cs (Lines 151-185)\n```csharp\n// Assert\n            Assert.IsType<NotFoundObjectResult>(result);\n        }\n\n        [Fact]\n        public async Task DeleteTicket_ReturnsOkResult_WhenTicketIsDeletedSuccessfully()\n        {\n            // Arrange\n            var existingTicket = new Ticket { Id = 1, Title = \"VPN Issue\", Status = \"Open\" };\n            _mockRepo.Setup(repo => repo.GetTicketByIdAsync(1)).ReturnsAsync(existingTicket);\n            _mockRepo.Setup(repo => repo.DeleteTicketAsync(1)).Returns(Task.CompletedTask);\n\n            // Act\n            var result = await _controller.DeleteTicket(1);\n\n            // Assert\n            Assert.IsType<OkObjectResult>(result);\n        }\n\n        [Fact]\n        public async Task DeleteTicket_ReturnsNotFound_WhenTicketDoesNotExist()\n        {\n            // Arrange\n            _mockRepo.Setup(repo => repo.GetTicketByIdAsync(999)).ReturnsAsync((Ticket?)null);\n\n            // Act\n            var result = await _controller.DeleteTicket(999);\n\n            // Assert\n            Assert.IsType<NotFoundObjectResult>(result);\n        }\n\n        [Fact]\n        public async Task GetAllTickets_ReturnEmptyList_WhenNoTicketExist()\n        {\n```",
+    "chunk_type": "csharp_code",
+    "id": "chunk_046"
+  },
+  {
+    "source_file": "HelpDesk.Tests/Controllers/TicketControllerTests.cs",
+    "title": "HelpDesk.Tests/Controllers/TicketControllerTests.cs - TicketControllerTests (Lines 176-210)",
+    "section": "TicketControllerTests Code",
+    "start_line": 176,
+    "end_line": 210,
+    "content": "File: HelpDesk.Tests/Controllers/TicketControllerTests.cs (Lines 176-210)\n```csharp\n// Act\n            var result = await _controller.DeleteTicket(999);\n\n            // Assert\n            Assert.IsType<NotFoundObjectResult>(result);\n        }\n\n        [Fact]\n        public async Task GetAllTickets_ReturnEmptyList_WhenNoTicketExist()\n        {\n            // Arrange\n            _mockRepo.Setup(repo => repo.GetAllTicketsAsync()).ReturnsAsync(new List<Ticket>());\n\n            // Act\n            var result = await _controller.GetAllTickets();\n\n            // Assert\n            var okResult = Assert.IsType<OkObjectResult>(result);\n            var returnedTickets = Assert.IsAssignableFrom<List<Ticket>>(okResult.Value);\n            Assert.Empty(returnedTickets);\n        }\n\n        [Fact]\n        public async Task GetTicketsByStatus_ReturnEmptyList_WhenNoMatchingTicketsExist()\n        {\n            // Arrange\n            _mockRepo.Setup(repo => repo.GetTicketsByStatusAsync(\"Closed\")).ReturnsAsync(new List<Ticket>());\n\n            // Act\n            var result = await _controller.GetTicketsByStatus(\"Closed\");\n\n            // Assert\n            var okResult = Assert.IsType<OkObjectResult>(result);\n            var returnedTickets = Assert.IsAssignableFrom<List<Ticket>>(okResult.Value);\n            Assert.Empty(returnedTickets);\n```",
+    "chunk_type": "csharp_code",
+    "id": "chunk_047"
+  },
+  {
+    "source_file": "HelpDesk.Tests/Controllers/TicketControllerTests.cs",
+    "title": "HelpDesk.Tests/Controllers/TicketControllerTests.cs - TicketControllerTests (Lines 201-213)",
+    "section": "TicketControllerTests Code",
+    "start_line": 201,
+    "end_line": 213,
+    "content": "File: HelpDesk.Tests/Controllers/TicketControllerTests.cs (Lines 201-213)\n```csharp\n// Arrange\n            _mockRepo.Setup(repo => repo.GetTicketsByStatusAsync(\"Closed\")).ReturnsAsync(new List<Ticket>());\n\n            // Act\n            var result = await _controller.GetTicketsByStatus(\"Closed\");\n\n            // Assert\n            var okResult = Assert.IsType<OkObjectResult>(result);\n            var returnedTickets = Assert.IsAssignableFrom<List<Ticket>>(okResult.Value);\n            Assert.Empty(returnedTickets);\n        }\n    }\n}\n```",
+    "chunk_type": "csharp_code",
+    "id": "chunk_048"
+  },
+  {
+    "source_file": "HelpDesk.Tests/UnitTest1.cs",
+    "title": "HelpDesk.Tests/UnitTest1.cs - UnitTest1 (Lines 1-10)",
+    "section": "UnitTest1 Code",
+    "start_line": 1,
+    "end_line": 10,
+    "content": "File: HelpDesk.Tests/UnitTest1.cs (Lines 1-10)\n```csharp\n\ufeffnamespace HelpDesk.Tests;\n\npublic class UnitTest1\n{\n    [Fact]\n    public void Test1()\n    {\n\n    }\n}\n```",
+    "chunk_type": "csharp_code",
+    "id": "chunk_049"
+  },
+  {
+    "source_file": "HelpDesk_Assignment_Report.md",
+    "title": "HelpDesk_Assignment_Report.md - Help Desk Ticket Management System (`HelpDeskManagement`)",
+    "section": "Help Desk Ticket Management System (`HelpDeskManagement`)",
+    "start_line": 1,
+    "end_line": 1,
+    "content": "# Help Desk Ticket Management System (`HelpDeskManagement`)",
+    "chunk_type": "markdown",
+    "id": "chunk_050"
+  },
+  {
+    "source_file": "HelpDesk_Assignment_Report.md",
+    "title": "HelpDesk_Assignment_Report.md - Project Submission Report & Complete Code Documentation",
+    "section": "Project Submission Report & Complete Code Documentation",
+    "start_line": 2,
+    "end_line": 5,
+    "content": "## Project Submission Report & Complete Code Documentation\n\n---",
+    "chunk_type": "markdown",
+    "id": "chunk_051"
+  },
+  {
+    "source_file": "HelpDesk_Assignment_Report.md",
+    "title": "HelpDesk_Assignment_Report.md - 1. Executive Summary & Project Objective",
+    "section": "1. Executive Summary & Project Objective",
+    "start_line": 6,
+    "end_line": 11,
+    "content": "### 1. Executive Summary & Project Objective\n\nThe **Help Desk Ticket Management System (`HelpDeskManagement`)** is an enterprise-ready web application designed for managing internal employee IT support requests. Built using **ASP.NET Core 10.0 Web API**, **Entity Framework Core**, **SQL Server**, **ASP.NET Core MVC**, and **xUnit with Moq**, the system enables employees and IT support staff to create, view, filter, edit, and resolve support tickets.\n\n---",
+    "chunk_type": "markdown",
+    "id": "chunk_052"
+  },
+  {
+    "source_file": "HelpDesk_Assignment_Report.md",
+    "title": "HelpDesk_Assignment_Report.md - 2. System Architecture & Technical Stack",
+    "section": "2. System Architecture & Technical Stack",
+    "start_line": 12,
+    "end_line": 19,
+    "content": "### 2. System Architecture & Technical Stack\n\n- **Web API Layer (`HelpDesk.Api`)**: Exposes RESTful HTTP JSON endpoints. Implements Repository Pattern (`ITicketRepository`, `TicketRepository`) and EF Core DbContext for SQL Server.\n- **MVC Layer (`HelpDesk.Mvc`)**: User interface built with Razor Views and a dedicated Service Layer (`TicketService`) consuming Web API via `HttpClient`. All styling strictly follows a minimalist monochrome aesthetic (black/white contrast, square 90\u00b0 edges, single regular font weight).\n- **Unit Test Layer (`HelpDesk.Tests`)**: Independent test project with 13 xUnit unit tests mocking `ITicketRepository` via Moq to verify API controller logic in 100% isolation.\n\n---",
+    "chunk_type": "markdown",
+    "id": "chunk_053"
+  },
+  {
+    "source_file": "HelpDesk_Assignment_Report.md",
+    "title": "HelpDesk_Assignment_Report.md - 3. Application Screenshots & Visual Proof",
+    "section": "3. Application Screenshots & Visual Proof",
+    "start_line": 20,
+    "end_line": 44,
+    "content": "### 3. Application Screenshots & Visual Proof\n\n![Figure 1: HelpDesk Web API Execution Logs](Screenshot%202026-08-03%20235507.png)\n*Figure 1: HelpDesk Web API Execution Logs & Port Binding Verification*\n\n![Figure 2: Help Desk System Dashboard](Screenshot%202026-08-04%20001249.png)\n*Figure 2: Help Desk System Dashboard Overview (Total, Open, and Closed Ticket Cards)*\n\n![Figure 3: Support Tickets List Table](Screenshot%202026-08-04%20001257.png)\n*Figure 3: Support Tickets List Table View with Interactive Status Filters*\n\n![Figure 4: Detailed View of Individual Support Ticket](Screenshot%202026-08-04%20001303.png)\n*Figure 4: Detailed View of Individual Support Ticket*\n\n![Figure 5: Raise New Support Ticket Form](Screenshot%202026-08-04%20001317.png)\n*Figure 5: Raise New Support Ticket Form (Status Hardcoded to Open)*\n\n![Figure 6: Edit Ticket Form](Screenshot%202026-08-04%20001326.png)\n*Figure 6: Edit Ticket Form (Updating Priority & Status Drops)*\n\n![Figure 7: Delete Ticket Confirmation Page](Screenshot%202026-08-04%20001339.png)\n*Figure 7: Delete Ticket Confirmation Page*\n\n---",
+    "chunk_type": "markdown",
+    "id": "chunk_054"
+  },
+  {
+    "source_file": "HelpDesk_Assignment_Report.md",
+    "title": "HelpDesk_Assignment_Report.md - 4. REST API Endpoint Specifications",
+    "section": "4. REST API Endpoint Specifications",
+    "start_line": 45,
+    "end_line": 57,
+    "content": "### 4. REST API Endpoint Specifications\n\n| HTTP Method | API Endpoint | Description |\n| :--- | :--- | :--- |\n| **GET** | `/api/Ticket/All` | Retrieve list of all support tickets |\n| **GET** | `/api/Ticket/{id}` | Retrieve specific ticket details by ID |\n| **POST** | `/api/Ticket` | Create a new support ticket |\n| **PUT** | `/api/Ticket/{id}` | Update an existing support ticket |\n| **DELETE** | `/api/Ticket/{id}` | Delete support ticket by ID |\n| **GET** | `/api/Ticket/Status/{status}` | Filter support tickets by status (Open/In Progress/Closed) |\n\n---",
+    "chunk_type": "markdown",
+    "id": "chunk_055"
+  },
+  {
+    "source_file": "HelpDesk_Assignment_Report.md",
+    "title": "HelpDesk_Assignment_Report.md - 5. Unit Test Execution Results",
+    "section": "5. Unit Test Execution Results",
+    "start_line": 58,
+    "end_line": 66,
+    "content": "### 5. Unit Test Execution Results\n\nAll 13 unit test cases (6 mandatory + 7 extended/optional) were executed using **xUnit** and **Moq** against the Web API `TicketController`. \n- **Passed**: 13 / 13\n- **Failed**: 0\n- **Skipped**: 0\n\n---",
+    "chunk_type": "markdown",
+    "id": "chunk_056"
+  },
+  {
+    "source_file": "HelpDesk_Assignment_Report.md",
+    "title": "HelpDesk_Assignment_Report.md - 6. Complete Source Code Listings",
+    "section": "6. Complete Source Code Listings",
+    "start_line": 67,
+    "end_line": 68,
+    "content": "### 6. Complete Source Code Listings",
+    "chunk_type": "markdown",
+    "id": "chunk_057"
+  },
+  {
+    "source_file": "HelpDesk_Assignment_Report.md",
+    "title": "HelpDesk_Assignment_Report.md - `HelpDesk.Api/Models/Ticket.cs`",
+    "section": "`HelpDesk.Api/Models/Ticket.cs`",
+    "start_line": 69,
+    "end_line": 85,
+    "content": "#### `HelpDesk.Api/Models/Ticket.cs`\n```csharp\nnamespace HelpDesk.Api.Models\n{\n    public class Ticket\n    {\n        public int Id { get; set; }\n        public string Title { get; set; } = string.Empty;\n        public string Description { get; set; } = string.Empty;\n        public string Priority { get; set; } = \"Low\";\n        public string Status { get; set; } = \"Open\";\n        public string RaisedBy { get; set; } = string.Empty;\n        public DateTime CreatedDate { get; set; } = DateTime.Now;\n    }\n}\n```",
+    "chunk_type": "markdown",
+    "id": "chunk_058"
+  },
+  {
+    "source_file": "HelpDesk_Assignment_Report.md",
+    "title": "HelpDesk_Assignment_Report.md - `HelpDesk.Api/Repositories/ITicketRepository.cs`",
+    "section": "`HelpDesk.Api/Repositories/ITicketRepository.cs`",
+    "start_line": 86,
+    "end_line": 103,
+    "content": "#### `HelpDesk.Api/Repositories/ITicketRepository.cs`\n```csharp\nusing HelpDesk.Api.Models;\n\nnamespace HelpDesk.Api.Repositories\n{\n    public interface ITicketRepository\n    {\n        Task<List<Ticket>> GetAllTicketsAsync();\n        Task<Ticket?> GetTicketByIdAsync(int id);\n        Task<int> CreateTicketAsync(Ticket ticket);\n        Task UpdateTicketAsync(Ticket ticket);\n        Task DeleteTicketAsync(int id);\n        Task<List<Ticket>> GetTicketsByStatusAsync(string status);\n    }\n}\n```",
+    "chunk_type": "markdown",
+    "id": "chunk_059"
+  },
+  {
+    "source_file": "HelpDesk_Assignment_Report.md",
+    "title": "HelpDesk_Assignment_Report.md - `HelpDesk.Tests/Controllers/TicketControllerTests.cs`",
+    "section": "`HelpDesk.Tests/Controllers/TicketControllerTests.cs`",
+    "start_line": 104,
+    "end_line": 139,
+    "content": "#### `HelpDesk.Tests/Controllers/TicketControllerTests.cs`\n```csharp\nusing HelpDesk.Api.Controllers;\nusing HelpDesk.Api.Models;\nusing HelpDesk.Api.Repositories;\nusing Microsoft.AspNetCore.Mvc;\nusing Moq;\nusing Xunit;\n\nnamespace HelpDesk.Tests.Controllers\n{\n    public class TicketControllerTests\n    {\n        private readonly Mock<ITicketRepository> _mockRepo;\n        private readonly TicketController _controller;\n\n        public TicketControllerTests()\n        {\n            _mockRepo = new Mock<ITicketRepository>();\n            _controller = new TicketController(_mockRepo.Object);\n        }\n\n        [Fact]\n        public async Task GetAllTickets_ReturnsOkResult_WhenTicketExist()\n        {\n            var sampleTickets = new List<Ticket>\n            {\n                new Ticket { Id = 1, Title = \"VPN Issue\", Priority = \"High\", Status = \"Open\", RaisedBy = \"Rahul\" }\n            };\n            _mockRepo.Setup(repo => repo.GetAllTicketsAsync()).ReturnsAsync(sampleTickets);\n            var result = await _controller.GetAllTickets();\n            Assert.IsType<OkObjectResult>(result);\n        }\n    }\n}\n```",
+    "chunk_type": "markdown",
+    "id": "chunk_060"
+  },
+  {
+    "source_file": "HelpDeskManagement.sln",
+    "title": "HelpDeskManagement.sln - Configuration & Project Settings",
+    "section": "Project Config",
+    "start_line": 1,
+    "end_line": 30,
+    "content": "File: HelpDeskManagement.sln\n```\nMicrosoft Visual Studio Solution File, Format Version 12.00\n# Visual Studio Version 17\nVisualStudioVersion = 17.0.31903.59\nMinimumVisualStudioVersion = 10.0.40219.1\nProject(\"{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}\") = \"HelpDesk.Api\", \"HelpDesk.Api\\HelpDesk.Api.csproj\", \"{B1E2A3C4-D5E6-4F70-9812-3456789ABCDE}\"\nEndProject\nProject(\"{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}\") = \"HelpDesk.Mvc\", \"HelpDesk.Mvc\\HelpDesk.Mvc.csproj\", \"{C2E3A4B5-D6E7-4F81-9923-456789abcdef}\"\nEndProject\nProject(\"{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}\") = \"HelpDesk.Tests\", \"HelpDesk.Tests\\HelpDesk.Tests.csproj\", \"{D3E4A5B6-D7E8-4F92-8834-56789abcdef0}\"\nEndProject\nGlobal\n\tGlobalSection(SolutionConfigurationPlatforms) = preSolution\n\t\tDebug|Any CPU = Debug|Any CPU\n\t\tRelease|Any CPU = Release|Any CPU\n\tEndGlobalSection\n\tGlobalSection(ProjectConfigurationPlatforms) = postSolution\n\t\t{B1E2A3C4-D5E6-4F70-9812-3456789ABCDE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU\n\t\t{B1E2A3C4-D5E6-4F70-9812-3456789ABCDE}.Debug|Any CPU.Build.0 = Debug|Any CPU\n\t\t{B1E2A3C4-D5E6-4F70-9812-3456789ABCDE}.Release|Any CPU.ActiveCfg = Release|Any CPU\n\t\t{B1E2A3C4-D5E6-4F70-9812-3456789ABCDE}.Release|Any CPU.Build.0 = Release|Any CPU\n\t\t{C2E3A4B5-D6E7-4F81-9923-456789abcdef}.Debug|Any CPU.ActiveCfg = Debug|Any CPU\n\t\t{C2E3A4B5-D6E7-4F81-9923-456789abcdef}.Debug|Any CPU.Build.0 = Debug|Any CPU\n\t\t{C2E3A4B5-D6E7-4F81-9923-456789abcdef}.Release|Any CPU.ActiveCfg = Release|Any CPU\n\t\t{C2E3A4B5-D6E7-4F81-9923-456789abcdef}.Release|Any CPU.Build.0 = Release|Any CPU\n\t\t{D3E4A5B6-D7E8-4F92-8834-56789abcdef0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU\n\t\t{D3E4A5B6-D7E8-4F92-8834-56789abcdef0}.Debug|Any CPU.Build.0 = Debug|Any CPU\n\t\t{D3E4A5B6-D7E8-4F92-8834-56789abcdef0}.Release|Any CPU.ActiveCfg = Release|Any CPU\n\t\t{D3E4A5B6-D7E8-4F92-8834-56789abcdef0}.Release|Any CPU.Build.0 = Release|Any CPU\n\tEndGlobalSection\nEndGlobal\n```",
+    "chunk_type": "config",
+    "id": "chunk_061"
+  },
+  {
+    "source_file": "RAG_KNOWLEDGE_ASSISTANT_REPORT.md",
+    "title": "RAG_KNOWLEDGE_ASSISTANT_REPORT.md - RAG-Based Knowledge Assistant for HelpDesk Ticket Management System",
+    "section": "RAG-Based Knowledge Assistant for HelpDesk Ticket Management System",
+    "start_line": 1,
+    "end_line": 1,
+    "content": "# RAG-Based Knowledge Assistant for HelpDesk Ticket Management System",
+    "chunk_type": "markdown",
+    "id": "chunk_062"
+  },
+  {
+    "source_file": "RAG_KNOWLEDGE_ASSISTANT_REPORT.md",
+    "title": "RAG_KNOWLEDGE_ASSISTANT_REPORT.md - Assignment Report & System Architecture Document",
+    "section": "Assignment Report & System Architecture Document",
+    "start_line": 2,
+    "end_line": 5,
+    "content": "## Assignment Report & System Architecture Document\n\n---",
+    "chunk_type": "markdown",
+    "id": "chunk_063"
+  },
+  {
+    "source_file": "RAG_KNOWLEDGE_ASSISTANT_REPORT.md",
+    "title": "RAG_KNOWLEDGE_ASSISTANT_REPORT.md - Executive Summary",
+    "section": "Executive Summary",
+    "start_line": 6,
+    "end_line": 13,
+    "content": "### Executive Summary\n\nThis report presents the design, technical architecture, implementation, and empirical evaluation of the **AI-Powered RAG Knowledge Assistant** for the **Help Desk Ticket Management (`HelpDeskManagement`)** project. \n\nRetrieval-Augmented Generation (RAG) bridges the gap between pre-trained Large Language Models (LLMs) and private, proprietary enterprise knowledge bases. By dynamically retrieving relevant document chunks from the Help Desk project documentation and C# source code files, the assistant provides precise, hallucination-free, and citation-backed answers to onboard new developers without requiring manual reading of the codebase.\n\n---",
+    "chunk_type": "markdown",
+    "id": "chunk_064"
+  },
+  {
+    "source_file": "RAG_KNOWLEDGE_ASSISTANT_REPORT.md",
+    "title": "RAG_KNOWLEDGE_ASSISTANT_REPORT.md - 1. RAG Architecture & System Overview",
+    "section": "1. RAG Architecture & System Overview",
+    "start_line": 14,
+    "end_line": 38,
+    "content": "### 1. RAG Architecture & System Overview\n\nThe system consists of five primary layers:\n1. **Document Ingestion & Chunking Layer (`rag_assistant/ingest.py`)**: Parses Markdown documentation, C# source code, and configuration files into semantic chunks while maintaining structural context and line-number metadata.\n2. **Vector Store & Indexing Layer (`rag_assistant/vector_store.py`)**: Embeds text chunks using sublinear TF-IDF n-gram vectorization and dense keyword boosting into a persistent vector index (`vector_db.json`).\n3. **Retrieval & Semantic Search Engine**: Executes hybrid dense-vector and keyword similarity search to retrieve top-$k$ relevant context snippets based on developer queries.\n4. **Prompt Augmentation & Generation Layer (`rag_assistant/rag_engine.py`)**: Augments developer queries with retrieved context snippets and passes them to an LLM generator (Google Gemini API or local extractive synthesizer) with exact source citations ([Source: `README.md#L81-92`]).\n5. **Interactive User Interfaces (`app.py`, `cli.py`)**: Streamlit web dashboard and terminal CLI for real-time interaction, onboarding preset galleries, and source snippet inspection.\n\n```mermaid\ngraph TD\n    A[\"Project Docs & C# Source Code\"] -->|Section & Code Parsing| B[\"Document Ingestor (ingest.py)\"]\n    B -->|Semantic Chunks + Metadata| C[\"Vector Store Indexer (vector_store.py)\"]\n    C -->|Persist Index| D[\"vector_db.json Storage\"]\n    \n    E[\"Developer Question\"] -->|Semantic Search Query| C\n    D -->|Retrieve Top-k Context Snippets| F[\"RAG Orchestrator Engine (rag_engine.py)\"]\n    E -->|Augmented Prompt Construction| F\n    \n    F -->|Generation API / Local Synthesizer| G[\"LLM Answer Generator\"]\n    G -->|Response + Provenance Citations| H[\"Streamlit Web UI (app.py) / CLI (cli.py)\"]\n```\n\n---",
+    "chunk_type": "markdown",
+    "id": "chunk_065"
+  },
+  {
+    "source_file": "RAG_KNOWLEDGE_ASSISTANT_REPORT.md",
+    "title": "RAG_KNOWLEDGE_ASSISTANT_REPORT.md - 2. Theoretical Background: Why RAG for Private Codebases?",
+    "section": "2. Theoretical Background: Why RAG for Private Codebases?",
+    "start_line": 39,
+    "end_line": 49,
+    "content": "### 2. Theoretical Background: Why RAG for Private Codebases?\n\n| Criterion | Standard Pre-Trained LLM | Fine-Tuned Model | RAG Knowledge Assistant (Implemented) |\n| :--- | :--- | :--- | :--- |\n| **Private Code Access** | \u274c No knowledge of internal code | \u26a0\ufe0f Requires retraining on every commit | \u2705 Instant dynamic indexing of local codebase |\n| **Hallucination Risk** | \u274c High risk of making up non-existent APIs | \u26a0\ufe0f Medium risk | \u2705 Zero/Low risk (Grounded strictly in context) |\n| **Source Provenance** | \u274c No source citations | \u274c No source citations | \u2705 Exact file path and line-number citations |\n| **Cost & Latency** | \ud83d\udcb2 High API token costs | \ud83d\udcb8 Extremely high GPU training costs | \u26a1 Microsecond retrieval latency (< 2 ms) |\n\n---",
+    "chunk_type": "markdown",
+    "id": "chunk_066"
+  },
+  {
+    "source_file": "RAG_KNOWLEDGE_ASSISTANT_REPORT.md",
+    "title": "RAG_KNOWLEDGE_ASSISTANT_REPORT.md - 3. Key Components & Code Architecture",
+    "section": "3. Key Components & Code Architecture",
+    "start_line": 50,
+    "end_line": 51,
+    "content": "### 3. Key Components & Code Architecture",
+    "chunk_type": "markdown",
+    "id": "chunk_067"
+  },
+  {
+    "source_file": "RAG_KNOWLEDGE_ASSISTANT_REPORT.md",
+    "title": "RAG_KNOWLEDGE_ASSISTANT_REPORT.md - A. Document Ingestion & Chunking (`rag_assistant/ingest.py`)",
+    "section": "A. Document Ingestion & Chunking (`rag_assistant/ingest.py`)",
+    "start_line": 52,
+    "end_line": 55,
+    "content": "#### A. Document Ingestion & Chunking (`rag_assistant/ingest.py`)\n- **Markdown Parser**: Splits by H1/H2/H3 header boundaries and paragraph blocks, retaining document hierarchy.\n- **C# Code Parser**: Extracts class, interface, method signatures, and 30-40 line blocks, attaching line number ranges (`L1-L35`).",
+    "chunk_type": "markdown",
+    "id": "chunk_068"
+  },
+  {
+    "source_file": "RAG_KNOWLEDGE_ASSISTANT_REPORT.md",
+    "title": "RAG_KNOWLEDGE_ASSISTANT_REPORT.md - B. Vector Store (`rag_assistant/vector_store.py`)",
+    "section": "B. Vector Store (`rag_assistant/vector_store.py`)",
+    "start_line": 56,
+    "end_line": 59,
+    "content": "#### B. Vector Store (`rag_assistant/vector_store.py`)\n- **Hybrid Retrieval**: Combines sublinear TF-IDF vector representations ($1, 3$-grams) with exact match domain keyword weighting.\n- **Relevance Scoring**: Cosine similarity combined with title and source-path weighting.",
+    "chunk_type": "markdown",
+    "id": "chunk_069"
+  },
+  {
+    "source_file": "RAG_KNOWLEDGE_ASSISTANT_REPORT.md",
+    "title": "RAG_KNOWLEDGE_ASSISTANT_REPORT.md - C. RAG Engine & Synthesizer (`rag_assistant/rag_engine.py`)",
+    "section": "C. RAG Engine & Synthesizer (`rag_assistant/rag_engine.py`)",
+    "start_line": 60,
+    "end_line": 65,
+    "content": "#### C. RAG Engine & Synthesizer (`rag_assistant/rag_engine.py`)\n- **Prompt Augmentation**: Formats context into an isolated context block.\n- **Local Fallback Synthesizer**: Ensures 100% offline capability without requiring third-party API keys or internet access.\n\n---",
+    "chunk_type": "markdown",
+    "id": "chunk_070"
+  },
+  {
+    "source_file": "RAG_KNOWLEDGE_ASSISTANT_REPORT.md",
+    "title": "RAG_KNOWLEDGE_ASSISTANT_REPORT.md - 4. Interactive Applications",
+    "section": "4. Interactive Applications",
+    "start_line": 66,
+    "end_line": 67,
+    "content": "### 4. Interactive Applications",
+    "chunk_type": "markdown",
+    "id": "chunk_071"
+  },
+  {
+    "source_file": "RAG_KNOWLEDGE_ASSISTANT_REPORT.md",
+    "title": "RAG_KNOWLEDGE_ASSISTANT_REPORT.md - Streamlit Web Portal (`app.py`)",
+    "section": "Streamlit Web Portal (`app.py`)",
+    "start_line": 68,
+    "end_line": 74,
+    "content": "#### Streamlit Web Portal (`app.py`)\n- Launch Command: `streamlit run app.py`\n- Features:\n  - Preset Onboarding Gallery (REST API Specs, Architecture, Unit Tests, Local Execution).\n  - Collapsible Context Snippet Inspector showing relevance scores.\n  - One-click Re-indexing button for updating the knowledge base when project files change.",
+    "chunk_type": "markdown",
+    "id": "chunk_072"
+  },
+  {
+    "source_file": "RAG_KNOWLEDGE_ASSISTANT_REPORT.md",
+    "title": "RAG_KNOWLEDGE_ASSISTANT_REPORT.md - Terminal CLI (`cli.py`)",
+    "section": "Terminal CLI (`cli.py`)",
+    "start_line": 75,
+    "end_line": 80,
+    "content": "#### Terminal CLI (`cli.py`)\n- Single Query Command: `python cli.py \"What REST API endpoints exist?\"`\n- Interactive Session: `python cli.py`\n\n---",
+    "chunk_type": "markdown",
+    "id": "chunk_073"
+  },
+  {
+    "source_file": "RAG_KNOWLEDGE_ASSISTANT_REPORT.md",
+    "title": "RAG_KNOWLEDGE_ASSISTANT_REPORT.md - 5. Empirical Evaluation & Benchmark Results",
+    "section": "5. Empirical Evaluation & Benchmark Results",
+    "start_line": 81,
+    "end_line": 112,
+    "content": "### 5. Empirical Evaluation & Benchmark Results\n\nThe system was evaluated against 5 developer onboarding test cases using `evaluate_rag.py`.\n\n```\n============================================================\n\ud83e\uddea RAG KNOWLEDGE ASSISTANT EVALUATION & BENCHMARK SUITE\n============================================================\n[Ingest Complete] Indexed 23 files into 64 chunks.\n[VectorStore] Successfully indexed 64 chunks into vector space.\n\u2705 Ingestion & Indexing completed in 0.02 seconds.\n\nExecuting Test Queries:\n------------------------------------------------------------\n[TC-01] API Specs: What REST API endpoints exist and what a... -> \u2705 PASS (2.0 ms)\n      Top Source: README.md | Score: 1.0986\n[TC-02] Architecture: Explain the project architecture and mul... -> \u2705 PASS (1.0 ms)\n      Top Source: HelpDesk_Assignment_Report.md | Score: 0.4475\n[TC-03] MVC Integration: How does HelpDesk.Mvc consume the Web AP... -> \u2705 PASS (1.0 ms)\n      Top Source: HelpDesk.Mvc/Controllers/TicketController.cs | Score: 0.9673\n[TC-04] Unit Testing: How are unit tests set up with Moq and x... -> \u2705 PASS (1.0 ms)\n      Top Source: HelpDesk.Tests/UnitTest1.cs | Score: 0.8476\n[TC-05] Deployment: How to run the Web API and MVC applicati... -> \u2705 PASS (1.0 ms)\n      Top Source: README.md | Score: 0.7385\n\n============================================================\n\ud83d\udcca EVALUATION SUMMARY: 5/5 Passed (100.0%)\n============================================================\n```\n\n---",
+    "chunk_type": "markdown",
+    "id": "chunk_074"
+  },
+  {
+    "source_file": "RAG_KNOWLEDGE_ASSISTANT_REPORT.md",
+    "title": "RAG_KNOWLEDGE_ASSISTANT_REPORT.md - 6. Sample Onboarding Q&A Outputs",
+    "section": "6. Sample Onboarding Q&A Outputs",
+    "start_line": 113,
+    "end_line": 114,
+    "content": "### 6. Sample Onboarding Q&A Outputs",
+    "chunk_type": "markdown",
+    "id": "chunk_075"
+  },
+  {
+    "source_file": "RAG_KNOWLEDGE_ASSISTANT_REPORT.md",
+    "title": "RAG_KNOWLEDGE_ASSISTANT_REPORT.md - Question 1: \"What REST API endpoints exist and what are their HTTP methods?\"",
+    "section": "Question 1: \"What REST API endpoints exist and what are their HTTP methods?\"",
+    "start_line": 115,
+    "end_line": 129,
+    "content": "#### Question 1: \"What REST API endpoints exist and what are their HTTP methods?\"\n> **Answer**:\n> The **HelpDesk Web API (`HelpDesk.Api`)** exposes standard RESTful endpoints for support ticket management:\n> \n> | HTTP Method | API Endpoint | Description |\n> | :--- | :--- | :--- |\n> | **GET** | `/api/Ticket/All` | Retrieve all support tickets |\n> | **GET** | `/api/Ticket/{id}` | Get ticket details by ID |\n> | **POST** | `/api/Ticket` | Create a new support ticket |\n> | **PUT** | `/api/Ticket/{id}` | Update existing ticket |\n> | **DELETE** | `/api/Ticket/{id}` | Delete ticket by ID |\n> | **GET** | `/api/Ticket/Status/{status}` | Filter tickets by status (Open/In Progress/Closed) |\n> \n> **Citations**: `README.md#L81-L93`, `HelpDesk_Assignment_Report.md#L45-L57`",
+    "chunk_type": "markdown",
+    "id": "chunk_076"
+  },
+  {
+    "source_file": "RAG_KNOWLEDGE_ASSISTANT_REPORT.md",
+    "title": "RAG_KNOWLEDGE_ASSISTANT_REPORT.md - Question 2: \"How does HelpDesk.Mvc consume the Web API?\"",
+    "section": "Question 2: \"How does HelpDesk.Mvc consume the Web API?\"",
+    "start_line": 130,
+    "end_line": 141,
+    "content": "#### Question 2: \"How does HelpDesk.Mvc consume the Web API?\"\n> **Answer**:\n> The **`HelpDesk.Mvc`** application consumes the REST Web API via a dedicated Service Layer (`HelpDesk.Mvc/Services/TicketService.cs`):\n> - `GetAllTicketsAsync()` calls `GetFromJsonAsync<List<Ticket>>(\"api/Ticket/All\")`\n> - `CreateTicketAsync(ticket)` calls `PostAsJsonAsync(\"api/Ticket\", ticket)`\n> - `UpdateTicketAsync(ticket)` calls `PutAsJsonAsync(\"api/Ticket/{id}\", ticket)`\n> - `DeleteTicketAsync(id)` calls `DeleteAsync(\"api/Ticket/{id}\")`\n> \n> **Citations**: `HelpDesk.Mvc/Services/TicketService.cs#L1-L93`\n\n---",
+    "chunk_type": "markdown",
+    "id": "chunk_077"
+  },
+  {
+    "source_file": "RAG_KNOWLEDGE_ASSISTANT_REPORT.md",
+    "title": "RAG_KNOWLEDGE_ASSISTANT_REPORT.md - 7. How to Run the RAG Knowledge Assistant",
+    "section": "7. How to Run the RAG Knowledge Assistant",
+    "start_line": 142,
+    "end_line": 160,
+    "content": "### 7. How to Run the RAG Knowledge Assistant\n\n1. **Run Evaluation Benchmark**:\n   ```bash\n   python evaluate_rag.py\n   ```\n\n2. **Launch Streamlit Web App**:\n   ```bash\n   streamlit run app.py\n   ```\n\n3. **Run Terminal CLI**:\n   ```bash\n   python cli.py \"How are unit tests set up with Moq?\"\n   ```\n\n---",
+    "chunk_type": "markdown",
+    "id": "chunk_078"
+  },
+  {
+    "source_file": "RAG_KNOWLEDGE_ASSISTANT_REPORT.md",
+    "title": "RAG_KNOWLEDGE_ASSISTANT_REPORT.md - 8. Conclusion",
+    "section": "8. Conclusion",
+    "start_line": 161,
+    "end_line": 163,
+    "content": "### 8. Conclusion\n\nThe RAG-Based Knowledge Assistant successfully demonstrates how Retrieval-Augmented Generation provides instant, accurate, citation-backed AI assistance for private software repositories. With 100% benchmark evaluation accuracy and microsecond retrieval speed, new developers can instantly query the Help Desk Ticket Management project without reading hundreds of lines of code manually.",
+    "chunk_type": "markdown",
+    "id": "chunk_079"
+  },
+  {
+    "source_file": "README.md",
+    "title": "README.md - Help Desk Ticket Management System (`HelpDeskManagement`)",
+    "section": "Help Desk Ticket Management System (`HelpDeskManagement`)",
+    "start_line": 1,
+    "end_line": 6,
+    "content": "# Help Desk Ticket Management System (`HelpDeskManagement`)\n\nA complete Help Desk Ticket Management System built with **ASP.NET Core 10.0 Web API**, **Entity Framework Core**, **SQL Server**, **ASP.NET Core MVC** (consuming API via `HttpClient`), and **xUnit with Moq** for unit testing.\n\n---",
+    "chunk_type": "markdown",
+    "id": "chunk_080"
+  },
+  {
+    "source_file": "README.md",
+    "title": "README.md - \ud83d\udcc1 Repository Structure (Part 2)",
+    "section": "\ud83d\udcc1 Repository Structure",
+    "start_line": 7,
+    "end_line": 51,
+    "content": "## \ud83d\udcc1 Repository Structure\n\n```\nHelpDeskManagement/\n\u251c\u2500\u2500 HelpDesk.Api/\n\u2502   \u251c\u2500\u2500 Controllers/\n\u2502   \u2502   \u2514\u2500\u2500 TicketController.cs        # REST API endpoints\n\u2502   \u251c\u2500\u2500 Data/\n\u2502   \u2502   \u2514\u2500\u2500 HelpDeskDbContext.cs       # EF Core DbContext & seed data\n\u2502   \u251c\u2500\u2500 Models/\n\u2502   \u2502   \u2514\u2500\u2500 Ticket.cs                  # Primary Ticket domain entity\n\u2502   \u251c\u2500\u2500 Repositories/\n\u2502   \u2502   \u251c\u2500\u2500 ITicketRepository.cs       # Repository interface\n\u2502   \u2502   \u2514\u2500\u2500 TicketRepository.cs        # Async Repository implementation\n\u2502   \u251c\u2500\u2500 Program.cs\n\u2502   \u2514\u2500\u2500 appsettings.json\n\u2502\n\u251c\u2500\u2500 HelpDesk.Mvc/\n\u2502   \u251c\u2500\u2500 Controllers/\n\u2502   \u2502   \u251c\u2500\u2500 HomeController.cs          # Redirects root to Dashboard\n\u2502   \u2502   \u2514\u2500\u2500 TicketController.cs        # MVC Controller for Dashboard, Index, Create, Edit, Delete\n\u2502   \u251c\u2500\u2500 Models/\n\u2502   \u2502   \u251c\u2500\u2500 DashboardViewModel.cs      # Metric counts (Total, Open, Closed)\n\u2502   \u2502   \u2514\u2500\u2500 Ticket.cs                  # Client domain model with validation\n\u2502   \u251c\u2500\u2500 Services/\n\u2502   \u2502   \u2514\u2500\u2500 TicketService.cs           # Service layer consuming Web API via HttpClient\n\u2502   \u251c\u2500\u2500 Views/\n\u2502   \u2502   \u251c\u2500\u2500 Shared/\n\u2502   \u2502   \u2502   \u2514\u2500\u2500 _Layout.cshtml         # Minimalist monochrome layout\n\u2502   \u2502   \u2514\u2500\u2500 Ticket/\n\u2502   \u2502       \u251c\u2500\u2500 Dashboard.cshtml       # Metrics overview cards\n\u2502   \u2502       \u251c\u2500\u2500 Index.cshtml           # Ticket list with status filter\n\u2502   \u2502       \u251c\u2500\u2500 Details.cshtml         # Full ticket details\n\u2502   \u2502       \u251c\u2500\u2500 Create.cshtml          # Form to raise new ticket (Status = Open)\n\u2502   \u2502       \u251c\u2500\u2500 Edit.cshtml            # Form to update priority & status\n\u2502   \u2502       \u2514\u2500\u2500 Delete.cshtml          # Delete confirmation view\n\u2502   \u251c\u2500\u2500 Program.cs\n\u2502   \u2514\u2500\u2500 appsettings.json\n\u2502\n\u251c\u2500\u2500 HelpDesk.Tests/\n\u2502   \u2514\u2500\u2500 Controllers/\n\u2502       \u2514\u2500\u2500 TicketControllerTests.cs   # 13 xUnit unit tests mocking ITicketRepository with Moq\n\u2502\n\u251c\u2500\u2500 HelpDeskManagement.sln             # Visual Studio solution file\n\u251c\u2500\u2500 HelpDeskManagement.slnx            # Solution XML definition file",
+    "chunk_type": "markdown",
+    "id": "chunk_081"
+  },
+  {
+    "source_file": "README.md",
+    "title": "README.md - \ud83d\udcc1 Repository Structure",
+    "section": "\ud83d\udcc1 Repository Structure",
+    "start_line": 52,
+    "end_line": 57,
+    "content": "\u251c\u2500\u2500 README.md                          # Solution documentation\n\u2514\u2500\u2500 .gitignore                         # Build ignore configuration\n```\n\n---",
+    "chunk_type": "markdown",
+    "id": "chunk_082"
+  },
+  {
+    "source_file": "README.md",
+    "title": "README.md - \u26a1 Solution Highlights & Architecture",
+    "section": "\u26a1 Solution Highlights & Architecture",
+    "start_line": 58,
+    "end_line": 80,
+    "content": "## \u26a1 Solution Highlights & Architecture\n\n1. **Web API Layer (`HelpDesk.Api`)**:\n   - RESTful endpoints following standard HTTP verbs (`GET`, `POST`, `PUT`, `DELETE`).\n   - Clean implementation of **Repository Pattern** (`ITicketRepository` and `TicketRepository`).\n   - Uses EF Core with SQL Server (`SQLEXPRESS`).\n\n2. **MVC Layer (`HelpDesk.Mvc`)**:\n   - Implements **Service Layer (`TicketService`)** consuming Web API via `HttpClient`.\n   - Controllers interact **strictly via the Service Layer** (zero direct database access).\n   - **Dashboard**: Displays Total Tickets, Open Tickets, and Closed Tickets metric cards.\n   - **Status Filtering**: Filter tickets by `Open`, `In Progress`, and `Closed`.\n   - **Create Ticket**: Status is hardcoded to `Open`. Priority is selected via Dropdown.\n   - **Edit Ticket**: Allows updating Title, Description, Priority (Dropdown), and Status (Dropdown).\n\n3. **Unit Testing (`HelpDesk.Tests`)**:\n   - Built with **xUnit** and **Moq**.\n   - Tests `TicketController` actions by mocking `ITicketRepository`.\n   - **Zero connection to SQL Server** during unit testing.\n   - Passes all 13 unit tests.\n\n---",
+    "chunk_type": "markdown",
+    "id": "chunk_083"
+  },
+  {
+    "source_file": "README.md",
+    "title": "README.md - \ud83d\udee0\ufe0f REST API Endpoints",
+    "section": "\ud83d\udee0\ufe0f REST API Endpoints",
+    "start_line": 81,
+    "end_line": 93,
+    "content": "## \ud83d\udee0\ufe0f REST API Endpoints\n\n| HTTP Method | API Endpoint | Description |\n| :--- | :--- | :--- |\n| **GET** | `/api/Ticket/All` | Retrieve all tickets |\n| **GET** | `/api/Ticket/{id}` | Get ticket details by ID |\n| **POST** | `/api/Ticket` | Create a new support ticket |\n| **PUT** | `/api/Ticket/{id}` | Update existing ticket |\n| **DELETE** | `/api/Ticket/{id}` | Delete ticket by ID |\n| **GET** | `/api/Ticket/Status/{status}` | Filter tickets by status |\n\n---",
+    "chunk_type": "markdown",
+    "id": "chunk_084"
+  },
+  {
+    "source_file": "README.md",
+    "title": "README.md - \ud83e\uddea Running Unit Tests",
+    "section": "\ud83e\uddea Running Unit Tests",
+    "start_line": 94,
+    "end_line": 102,
+    "content": "## \ud83e\uddea Running Unit Tests\n\nRun all xUnit unit tests using .NET CLI:\n```bash\ndotnet test HelpDesk.Tests/HelpDesk.Tests.csproj\n```\n\n---",
+    "chunk_type": "markdown",
+    "id": "chunk_085"
+  },
+  {
+    "source_file": "README.md",
+    "title": "README.md - \ud83d\ude80 Running the Projects Locally",
+    "section": "\ud83d\ude80 Running the Projects Locally",
+    "start_line": 103,
+    "end_line": 113,
+    "content": "## \ud83d\ude80 Running the Projects Locally\n\n1. **Start Web API**:\n   ```bash\n   dotnet run --project HelpDesk.Api/HelpDesk.Api.csproj --urls \"http://localhost:5000\"\n   ```\n2. **Start MVC Application**:\n   ```bash\n   dotnet run --project HelpDesk.Mvc/HelpDesk.Mvc.csproj --urls \"http://localhost:5200\"\n   ```\n3. Open `http://localhost:5200` in your browser.",
+    "chunk_type": "markdown",
+    "id": "chunk_086"
+  },
+  {
+    "source_file": "README_RAG.md",
+    "title": "README_RAG.md - \ud83e\udd16 HelpDesk RAG Knowledge Assistant",
+    "section": "\ud83e\udd16 HelpDesk RAG Knowledge Assistant",
+    "start_line": 1,
+    "end_line": 6,
+    "content": "# \ud83e\udd16 HelpDesk RAG Knowledge Assistant\n\nAn AI-powered Retrieval-Augmented Generation (RAG) onboarding assistant built for the **Help Desk Ticket Management** project (`HelpDeskManagement`).\n\n---",
+    "chunk_type": "markdown",
+    "id": "chunk_087"
+  },
+  {
+    "source_file": "README_RAG.md",
+    "title": "README_RAG.md - 1. Launch Web Dashboard (Streamlit)",
+    "section": "1. Launch Web Dashboard (Streamlit)",
+    "start_line": 9,
+    "end_line": 14,
+    "content": "### 1. Launch Web Dashboard (Streamlit)\n```bash\nstreamlit run app.py\n```\nOpen `http://localhost:8501` in your browser.",
+    "chunk_type": "markdown",
+    "id": "chunk_088"
+  },
+  {
+    "source_file": "README_RAG.md",
+    "title": "README_RAG.md - 2. Run Terminal CLI",
+    "section": "2. Run Terminal CLI",
+    "start_line": 15,
+    "end_line": 19,
+    "content": "### 2. Run Terminal CLI\n```bash\npython cli.py \"What REST API endpoints exist?\"\n```",
+    "chunk_type": "markdown",
+    "id": "chunk_089"
+  },
+  {
+    "source_file": "README_RAG.md",
+    "title": "README_RAG.md - 3. Run Automated Benchmark Evaluation",
+    "section": "3. Run Automated Benchmark Evaluation",
+    "start_line": 20,
+    "end_line": 26,
+    "content": "### 3. Run Automated Benchmark Evaluation\n```bash\npython evaluate_rag.py\n```\n\n---",
+    "chunk_type": "markdown",
+    "id": "chunk_090"
+  },
+  {
+    "source_file": "README_RAG.md",
+    "title": "README_RAG.md - \ud83d\udcc1 RAG Package Structure",
+    "section": "\ud83d\udcc1 RAG Package Structure",
+    "start_line": 27,
+    "end_line": 44,
+    "content": "## \ud83d\udcc1 RAG Package Structure\n\n```\nc:\\MP Online\\Assignment aug 01\\\n\u251c\u2500\u2500 rag_assistant/\n\u2502   \u251c\u2500\u2500 __init__.py\n\u2502   \u251c\u2500\u2500 ingest.py         # Document parser & semantic chunker\n\u2502   \u251c\u2500\u2500 vector_store.py   # Hybrid vector search & indexing engine\n\u2502   \u2514\u2500\u2500 rag_engine.py     # Augmented prompt synthesizer & answer generator\n\u251c\u2500\u2500 app.py                # Streamlit Web Application\n\u251c\u2500\u2500 cli.py                # Terminal CLI tool\n\u251c\u2500\u2500 evaluate_rag.py       # Automated benchmark test suite (5/5 PASSED)\n\u251c\u2500\u2500 vector_db.json        # Indexed vector database cache\n\u2514\u2500\u2500 RAG_KNOWLEDGE_ASSISTANT_REPORT.md  # Detailed Assignment Report\n```\n\n---",
+    "chunk_type": "markdown",
+    "id": "chunk_091"
+  },
+  {
+    "source_file": "README_RAG.md",
+    "title": "README_RAG.md - \ud83c\udfaf Key Features",
+    "section": "\ud83c\udfaf Key Features",
+    "start_line": 45,
+    "end_line": 50,
+    "content": "## \ud83c\udfaf Key Features\n\n- **Document Provenance & Line Citations**: Every answer highlights the exact file path and line numbers used (`README.md#L81-L93`).\n- **Hybrid Retrieval**: Combines TF-IDF sublinear n-gram vectors with domain keyword boosting for microsecond search speeds.\n- **Dual Synthesis Modes**: Supports Google Gemini API key or works 100% offline with built-in extractive synthesis.\n- **100% Benchmark Accuracy**: Verified across architecture, API, MVC service layer, unit tests, and deployment queries.",
+    "chunk_type": "markdown",
+    "id": "chunk_092"
+  }
+]
